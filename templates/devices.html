@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NetMonitor | Devices</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #080d18;
+        color: #e5e7eb;
+    }
+
+    /* =====================================================
+       SIDEBAR
+       ===================================================== */
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+
+        width: 255px;
+        height: 100vh;
+
+        background:
+            linear-gradient(
+                180deg,
+                #101827 0%,
+                #0d1422 100%
+            );
+
+        border-right: 1px solid #1d2939;
+
+        padding: 25px 18px;
+
+        z-index: 1000;
+
+        box-shadow:
+            8px 0 30px rgba(0, 0, 0, 0.20);
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        padding: 0 10px 30px;
+
+        color: #f8fafc;
+
+        font-size: 21px;
+
+        font-weight: 700;
+    }
+
+    .logo-icon {
+        width: 39px;
+        height: 39px;
+
+        border-radius: 11px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #3b82f6
+            );
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: white;
+
+        font-size: 24px;
+
+        box-shadow:
+            0 0 20px
+            rgba(37, 99, 235, 0.30);
+    }
+
+    .menu {
+        display: flex;
+        flex-direction: column;
+
+        gap: 6px;
+    }
+
+    .menu a {
+        position: relative;
+
+        text-decoration: none;
+
+        color: #8996aa;
+
+        padding: 13px 14px;
+
+        border-radius: 9px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        font-size: 14px;
+
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .menu a:hover {
+        background: #172235;
+
+        color: #e8eef8;
+
+        transform: translateX(2px);
+    }
+
+    .menu a.active {
+        background:
+            linear-gradient(
+                90deg,
+                #2563eb,
+                #1d4ed8
+            );
+
+        color: white;
+
+        box-shadow:
+            0 7px 20px
+            rgba(37, 99, 235, 0.22);
+    }
+
+    .menu a.active::before {
+        content: "";
+
+        position: absolute;
+
+        left: -18px;
+
+        top: 10px;
+
+        width: 3px;
+
+        height: 24px;
+
+        border-radius: 5px;
+
+        background: #60a5fa;
+    }
+
+    .menu-icon {
+        width: 20px;
+
+        text-align: center;
+
+        font-size: 17px;
+    }
+
+    .settings-link {
+        position: absolute;
+
+        bottom: 25px;
+
+        left: 18px;
+        right: 18px;
+
+        border-top: 1px solid #1d2939;
+
+        padding-top: 12px;
+    }
+
+    /* =====================================================
+       MAIN
+       ===================================================== */
+
+    .main {
+        margin-left: 255px;
+
+        padding: 30px 35px;
+
+        min-height: 100vh;
+
+        position: relative;
+
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at 85% 0%,
+                rgba(37, 99, 235, 0.10),
+                transparent 28%
+            ),
+            #080d18;
+    }
+
+    .main::before {
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        opacity: 0.18;
+
+        background-image:
+            linear-gradient(
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px
+            );
+
+        background-size: 40px 40px;
+    }
+
+    .main > * {
+        position: relative;
+
+        z-index: 1;
+    }
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .header {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 30px;
+    }
+
+    .header-left {
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
+    }
+
+    .header-indicator {
+        width: 4px;
+
+        height: 45px;
+
+        border-radius: 5px;
+
+        background:
+            linear-gradient(
+                180deg,
+                #60a5fa,
+                #2563eb
+            );
+
+        box-shadow:
+            0 0 12px
+            rgba(59, 130, 246, 0.35);
+    }
+
+    .header h1 {
+        margin: 0 0 6px;
+
+        font-size: 28px;
+
+        color: #f8fafc;
+
+        letter-spacing: -0.5px;
+    }
+
+    .header p {
+        margin: 0;
+
+        color: #78879c;
+
+        font-size: 14px;
+    }
+
+    .status {
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        background:
+            rgba(34, 197, 94, 0.08);
+
+        border:
+            1px solid
+            rgba(34, 197, 94, 0.20);
+
+        color: #4ade80;
+
+        padding: 9px 14px;
+
+        border-radius: 20px;
+
+        font-size: 12px;
+
+        font-weight: 600;
+    }
+
+    .status-dot {
+        width: 7px;
+
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #4ade80;
+
+        box-shadow:
+            0 0 8px
+            rgba(74, 222, 128, 0.70);
+    }
+
+    /* =====================================================
+       SUMMARY CARDS
+       ===================================================== */
+
+    .cards {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
+        gap: 18px;
+
+        margin-bottom: 24px;
+    }
+
+    .card {
+        position: relative;
+
+        overflow: hidden;
+
+        background:
+            linear-gradient(
+                145deg,
+                #111a2a,
+                #0e1624
+            );
+
+        border:
+            1px solid #1d2939;
+
+        border-radius: 13px;
+
+        padding: 21px;
+
+        box-shadow:
+            0 10px 30px
+            rgba(0, 0, 0, 0.16);
+
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+
+        border-color: #2d4058;
+
+        box-shadow:
+            0 15px 35px
+            rgba(0, 0, 0, 0.22);
+    }
+
+    .card-top {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 11px;
+    }
+
+    .card-title {
+        color: #8795a9;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+    }
+
+    .card-icon {
+        width: 27px;
+
+        height: 27px;
+
+        border-radius: 7px;
+
+        background: #17263b;
+
+        color: #60a5fa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 13px;
+    }
+
+    .card-value {
+        color: #f8fafc;
+
+        font-size: 27px;
+
+        font-weight: 700;
+    }
+
+    .card-subtitle {
+        color: #5f7087;
+
+        font-size: 11px;
+
+        margin-top: 7px;
+    }
+
+    /* =====================================================
+       DEVICE PANEL
+       ===================================================== */
+
+    .device-panel {
+        background:
+            linear-gradient(
+                145deg,
+                #111a2a,
+                #0e1624
+            );
+
+        border:
+            1px solid #1d2939;
+
+        border-radius: 13px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 10px 30px
+            rgba(0, 0, 0, 0.18);
+    }
+
+    .device-header {
+        padding: 20px 22px;
+
+        border-bottom:
+            1px solid #1d2939;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+    }
+
+    .device-title {
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+    }
+
+    .section-icon {
+        width: 31px;
+
+        height: 31px;
+
+        border-radius: 8px;
+
+        background: #17263b;
+
+        color: #60a5fa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 14px;
+    }
+
+    .device-title h2 {
+        margin: 0;
+
+        color: #f1f5f9;
+
+        font-size: 16px;
+    }
+
+    .device-count {
+        font-size: 10px;
+
+        color: #60a5fa;
+
+        background: #17263b;
+
+        padding: 4px 8px;
+
+        border-radius: 12px;
+    }
+
+    .refresh-btn {
+        border:
+            1px solid #29384d;
+
+        background: #162133;
+
+        color: #aebdd0;
+
+        padding: 8px 13px;
+
+        border-radius: 7px;
+
+        cursor: pointer;
+
+        font-size: 11px;
+
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+        background: #2563eb;
+
+        border-color: #2563eb;
+
+        color: white;
+    }
+
+    /* =====================================================
+       TABLE
+       ===================================================== */
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+
+        padding: 14px 20px;
+
+        background: #0c1422;
+
+        color: #607188;
+
+        font-size: 10px;
+
+        font-weight: 600;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+    }
+
+    td {
+        padding: 16px 20px;
+
+        border-top:
+            1px solid #192536;
+
+        color: #bac7d7;
+
+        font-size: 12px;
+    }
+
+    tr {
+        transition:
+            background 0.15s ease;
+    }
+
+    tr:hover td {
+        background:
+            rgba(30, 41, 59, 0.40);
+    }
+
+    .device-name {
+        color: #e5edf7;
+
+        font-weight: 600;
+    }
+
+    .ip-address {
+        color: #8091a8;
+
+        font-family: Consolas, monospace;
+
+        font-size: 11px;
+    }
+
+    .type-text {
+        color: #9aabc0;
+    }
+
+    .interface-text {
+        color: #8091a8;
+    }
+
+    .online,
+    .offline {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        font-weight: 600;
+
+        font-size: 11px;
+    }
+
+    .online {
+        color: #4ade80;
+    }
+
+    .offline {
+        color: #718198;
+    }
+
+    .online::before,
+    .offline::before {
+        content: "";
+
+        width: 6px;
+
+        height: 6px;
+
+        border-radius: 50%;
+    }
+
+    .online::before {
+        background: #4ade80;
+
+        box-shadow:
+            0 0 8px
+            rgba(74, 222, 128, 0.65);
+    }
+
+    .offline::before {
+        background: #64748b;
+    }
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .footer {
+        display: flex;
+
+        justify-content: flex-end;
+
+        gap: 5px;
+
+        color: #506078;
+
+        font-size: 10px;
+
+        margin-top: 17px;
+
+        padding-bottom: 5px;
+    }
+
+    #last-updated {
+        color: #708199;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1100px) {
+
+        .cards {
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+
+    }
+
+    @media (max-width: 700px) {
+
+        .sidebar {
+            width: 210px;
+        }
+
+        .main {
+            margin-left: 210px;
+
+            padding: 20px;
+        }
+
+        .cards {
+            grid-template-columns: 1fr;
+        }
+
+        .header {
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            gap: 15px;
+        }
+
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<!-- =====================================================
+     SIDEBAR
+     ===================================================== -->
+
+<aside class="sidebar">
+
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ⌁
+        </div>
+
+        <span>
+            NetMonitor
+        </span>
+
+    </div>
+
+
+    <nav class="menu">
+
+
+        <a href="/">
+
+            <span class="menu-icon">
+                ▣
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <a href="/devices" class="active">
+
+            <span class="menu-icon">
+                ▦
+            </span>
+
+            <span>
+                Devices
+            </span>
+
+        </a>
+
+
+        <a href="/traffic">
+
+            <span class="menu-icon">
+                ↕
+            </span>
+
+            <span>
+                Network Traffic
+            </span>
+
+        </a>
+
+
+        <a href="/performance">
+
+            <span class="menu-icon">
+                ◒
+            </span>
+
+            <span>
+                Performance
+            </span>
+
+        </a>
+
+
+        <a href="/alerts">
+
+            <span class="menu-icon">
+                △
+            </span>
+
+            <span>
+                Alerts
+            </span>
+
+        </a>
+
+
+        <a href="/reports">
+
+            <span class="menu-icon">
+                ▤
+            </span>
+
+            <span>
+                Reports
+            </span>
+
+        </a>
+
+
+    </nav>
+
+
+    <div class="settings-link">
+
+        <a href="/settings">
+
+            <span class="menu-icon">
+                ⚙
+            </span>
+
+            <span>
+                Settings
+            </span>
+
+        </a>
+
+    </div>
+
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN
+     ===================================================== -->
+
+<main class="main">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+
+        <div class="header-left">
+
+            <div class="header-indicator"></div>
+
+            <div>
+
+                <h1>
+                    Network Devices
+                </h1>
+
+                <p>
+                    Monitor and manage devices connected to your network
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            System Online
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         SUMMARY CARDS
+         ================================================= -->
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    Total Devices
+                </div>
+
+                <div class="card-icon">
+                    ▦
+                </div>
+
+            </div>
+
+            <div
+                class="card-value"
+                id="total-devices">
+                0
+            </div>
+
+            <div class="card-subtitle">
+                Devices detected
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    Online Devices
+                </div>
+
+                <div class="card-icon">
+                    ●
+                </div>
+
+            </div>
+
+            <div
+                class="card-value"
+                id="online-devices">
+                0
+            </div>
+
+            <div class="card-subtitle">
+                Currently active
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    Offline Devices
+                </div>
+
+                <div class="card-icon">
+                    ○
+                </div>
+
+            </div>
+
+            <div
+                class="card-value"
+                id="offline-devices">
+                0
+            </div>
+
+            <div class="card-subtitle">
+                Currently inactive
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    Network Interfaces
+                </div>
+
+                <div class="card-icon">
+                    ◈
+                </div>
+
+            </div>
+
+            <div
+                class="card-value"
+                id="interface-count">
+                0
+            </div>
+
+            <div class="card-subtitle">
+                Detected interfaces
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         DEVICE TABLE
+         ================================================= -->
+
+    <section class="device-panel">
+
+
+        <div class="device-header">
+
+
+            <div class="device-title">
+
+                <div class="section-icon">
+                    ▦
+                </div>
+
+                <h2>
+                    Connected Devices
+                </h2>
+
+                <span
+                    class="device-count"
+                    id="device-count">
+                    LIVE
+                </span>
+
+            </div>
+
+
+            <button
+                class="refresh-btn"
+                onclick="loadDevices()">
+
+                ↻ &nbsp; Refresh
+
+            </button>
+
+
+        </div>
+
+
+        <div class="table-container">
+
+
+            <table>
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Device
+                        </th>
+
+                        <th>
+                            IP Address
+                        </th>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <th>
+                            Interface
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="device-table">
+
+                    <tr>
+
+                        <td colspan="5">
+                            Loading devices...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        <span>
+            Last updated
+        </span>
+
+        <span id="last-updated">
+            --
+        </span>
+
+    </div>
+
+
+</main>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script>
+
+
+    /* =====================================================
+       ESCAPE HTML
+       ===================================================== */
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =====================================================
+       LOAD DEVICES
+       ===================================================== */
+
+    async function loadDevices() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/devices",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Devices API error"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            const devices =
+                Array.isArray(data)
+                    ? data
+                    : (
+                        data.devices || []
+                    );
+
+
+            const table =
+                document.getElementById(
+                    "device-table"
+                );
+
+
+            let online = 0;
+
+            let offline = 0;
+
+
+            if (devices.length === 0) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td colspan="5">
+                            No devices found
+                        </td>
+
+                    </tr>
+
+                `;
+
+            } else {
+
+
+                table.innerHTML =
+                    devices.map(
+                        device => {
+
+
+                            const status =
+                                String(
+                                    device.status ??
+                                    device.state ??
+                                    "Unknown"
+                                );
+
+
+                            if (
+                                status.toLowerCase()
+                                === "online"
+                            ) {
+
+                                online++;
+
+                            } else {
+
+                                offline++;
+
+                            }
+
+
+                            const statusClass =
+                                status.toLowerCase()
+                                === "online"
+                                    ? "online"
+                                    : "offline";
+
+
+                            const name =
+                                device.name ??
+                                device.hostname ??
+                                "Unknown";
+
+
+                            const ip =
+                                device.ip_address ??
+                                device.ip ??
+                                device.address ??
+                                "N/A";
+
+
+                            const type =
+                                device.device_type ??
+                                device.type ??
+                                "Unknown";
+
+
+                            const interfaceName =
+                                device.interface ??
+                                "Local System";
+
+
+                            return `
+
+                                <tr>
+
+                                    <td class="device-name">
+                                        ${escapeHTML(name)}
+                                    </td>
+
+                                    <td class="ip-address">
+                                        ${escapeHTML(ip)}
+                                    </td>
+
+                                    <td class="type-text">
+                                        ${escapeHTML(type)}
+                                    </td>
+
+                                    <td class="interface-text">
+                                        ${escapeHTML(interfaceName)}
+                                    </td>
+
+                                    <td class="${statusClass}">
+                                        ${escapeHTML(status)}
+                                    </td>
+
+                                </tr>
+
+                            `;
+
+                        }
+                    ).join("");
+
+            }
+
+
+            document.getElementById(
+                "total-devices"
+            ).textContent =
+                devices.length;
+
+
+            document.getElementById(
+                "online-devices"
+            ).textContent =
+                online;
+
+
+            document.getElementById(
+                "offline-devices"
+            ).textContent =
+                offline;
+
+
+            document.getElementById(
+                "interface-count"
+            ).textContent =
+                data.interface_count ??
+                devices.length;
+
+
+            document.getElementById(
+                "device-count"
+            ).textContent =
+                devices.length +
+                " DEVICES";
+
+
+            document.getElementById(
+                "last-updated"
+            ).textContent =
+                new Date().toLocaleTimeString();
+
+
+        } catch (error) {
+
+            console.error(
+                "Devices Error:",
+                error
+            );
+
+
+            document.getElementById(
+                "device-table"
+            ).innerHTML = `
+
+                <tr>
+
+                    <td colspan="5">
+                        Unable to load devices
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       START
+       ===================================================== */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            loadDevices();
+
+
+            /*
+             * Refresh device information
+             * every 5 seconds.
+             */
+
+            setInterval(
+                loadDevices,
+                5000
+            );
+
+        }
+    );
+
+
+</script>
+```
+
+</body>
+
+</html>

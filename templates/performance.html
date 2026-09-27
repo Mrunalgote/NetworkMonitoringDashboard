@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NetMonitor | Performance</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #080d18;
+        color: #e5e7eb;
+    }
+
+    /* =====================================================
+       SIDEBAR
+       ===================================================== */
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+
+        width: 255px;
+        height: 100vh;
+
+        background:
+            linear-gradient(
+                180deg,
+                #101827 0%,
+                #0d1422 100%
+            );
+
+        border-right: 1px solid #1d2939;
+
+        padding: 25px 18px;
+
+        z-index: 1000;
+
+        box-shadow:
+            8px 0 30px rgba(0, 0, 0, 0.20);
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        padding: 0 10px 30px;
+
+        color: #f8fafc;
+
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    .logo-icon {
+        width: 39px;
+        height: 39px;
+
+        border-radius: 11px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #3b82f6
+            );
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: white;
+
+        font-size: 24px;
+
+        box-shadow:
+            0 0 20px
+            rgba(37, 99, 235, 0.30);
+    }
+
+    .menu {
+        display: flex;
+        flex-direction: column;
+
+        gap: 6px;
+    }
+
+    .menu a {
+        position: relative;
+
+        text-decoration: none;
+
+        color: #8996aa;
+
+        padding: 13px 14px;
+
+        border-radius: 9px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        font-size: 14px;
+
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .menu a:hover {
+        background: #172235;
+
+        color: #e8eef8;
+
+        transform: translateX(2px);
+    }
+
+    .menu a.active {
+        background:
+            linear-gradient(
+                90deg,
+                #2563eb,
+                #1d4ed8
+            );
+
+        color: white;
+
+        box-shadow:
+            0 7px 20px
+            rgba(37, 99, 235, 0.22);
+    }
+
+    .menu a.active::before {
+        content: "";
+
+        position: absolute;
+
+        left: -18px;
+        top: 10px;
+
+        width: 3px;
+        height: 24px;
+
+        border-radius: 5px;
+
+        background: #60a5fa;
+    }
+
+    .menu-icon {
+        width: 20px;
+
+        text-align: center;
+
+        font-size: 17px;
+    }
+
+    .settings-link {
+        position: absolute;
+
+        bottom: 25px;
+
+        left: 18px;
+        right: 18px;
+
+        border-top: 1px solid #1d2939;
+
+        padding-top: 12px;
+    }
+
+    /* =====================================================
+       MAIN
+       ===================================================== */
+
+    .main {
+        margin-left: 255px;
+
+        padding: 30px 35px;
+
+        min-height: 100vh;
+
+        position: relative;
+
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at 85% 0%,
+                rgba(37, 99, 235, 0.10),
+                transparent 28%
+            ),
+            #080d18;
+    }
+
+    .main::before {
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        opacity: 0.18;
+
+        background-image:
+            linear-gradient(
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px
+            );
+
+        background-size: 40px 40px;
+    }
+
+    .main > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .header {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 30px;
+    }
+
+    .header-left {
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
+    }
+
+    .header-indicator {
+        width: 4px;
+
+        height: 45px;
+
+        border-radius: 5px;
+
+        background:
+            linear-gradient(
+                180deg,
+                #60a5fa,
+                #2563eb
+            );
+
+        box-shadow:
+            0 0 12px
+            rgba(59, 130, 246, 0.35);
+    }
+
+    .header h1 {
+        margin: 0 0 6px;
+
+        font-size: 28px;
+
+        color: #f8fafc;
+
+        letter-spacing: -0.5px;
+    }
+
+    .header p {
+        margin: 0;
+
+        color: #78879c;
+
+        font-size: 14px;
+    }
+
+    .status {
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        background:
+            rgba(34, 197, 94, 0.08);
+
+        border:
+            1px solid
+            rgba(34, 197, 94, 0.20);
+
+        color: #4ade80;
+
+        padding: 9px 14px;
+
+        border-radius: 20px;
+
+        font-size: 12px;
+
+        font-weight: 600;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #4ade80;
+
+        box-shadow:
+            0 0 8px
+            rgba(74, 222, 128, 0.70);
+    }
+
+    /* =====================================================
+       PERFORMANCE CARDS
+       ===================================================== */
+
+    .performance-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 18px;
+
+        margin-bottom: 24px;
+    }
+
+    .performance-card {
+        position: relative;
+
+        overflow: hidden;
+
+        background:
+            linear-gradient(
+                145deg,
+                #111a2a,
+                #0e1624
+            );
+
+        border:
+            1px solid #1d2939;
+
+        border-radius: 13px;
+
+        padding: 21px;
+
+        box-shadow:
+            0 10px 30px
+            rgba(0, 0, 0, 0.16);
+
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .performance-card:hover {
+        transform: translateY(-3px);
+
+        border-color: #2d4058;
+
+        box-shadow:
+            0 15px 35px
+            rgba(0, 0, 0, 0.22);
+    }
+
+    .card-top {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 12px;
+    }
+
+    .card-title {
+        color: #8795a9;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+    }
+
+    .card-icon {
+        width: 29px;
+        height: 29px;
+
+        border-radius: 8px;
+
+        background: #17263b;
+
+        color: #60a5fa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 14px;
+    }
+
+    .card-value {
+        color: #f8fafc;
+
+        font-size: 28px;
+
+        font-weight: 700;
+
+        margin-bottom: 13px;
+    }
+
+    .progress-track {
+        width: 100%;
+
+        height: 6px;
+
+        border-radius: 10px;
+
+        background: #1a2637;
+
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        width: 0%;
+
+        height: 100%;
+
+        border-radius: 10px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #2563eb,
+                #60a5fa
+            );
+
+        box-shadow:
+            0 0 10px
+            rgba(59, 130, 246, 0.35);
+
+        transition:
+            width 0.5s ease;
+    }
+
+    .card-footer {
+        display: flex;
+
+        justify-content: space-between;
+
+        margin-top: 9px;
+
+        color: #5f7087;
+
+        font-size: 10px;
+    }
+
+    /* =====================================================
+       LOWER GRID
+       ===================================================== */
+
+    .lower-grid {
+        display: grid;
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 18px;
+    }
+
+    .panel {
+        background:
+            linear-gradient(
+                145deg,
+                #111a2a,
+                #0e1624
+            );
+
+        border:
+            1px solid #1d2939;
+
+        border-radius: 13px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 10px 30px
+            rgba(0, 0, 0, 0.18);
+    }
+
+    .panel-header {
+        padding: 20px 22px;
+
+        border-bottom:
+            1px solid #1d2939;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+    }
+
+    .panel-title {
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+    }
+
+    .section-icon {
+        width: 31px;
+        height: 31px;
+
+        border-radius: 8px;
+
+        background: #17263b;
+
+        color: #60a5fa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 14px;
+    }
+
+    .panel-title h2 {
+        margin: 0;
+
+        color: #f1f5f9;
+
+        font-size: 16px;
+    }
+
+    .panel-body {
+        padding: 20px 22px;
+    }
+
+    /* =====================================================
+       SYSTEM INFORMATION
+       ===================================================== */
+
+    .info-list {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 0;
+    }
+
+    .info-row {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        padding: 13px 0;
+
+        border-bottom:
+            1px solid #192536;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: #718198;
+
+        font-size: 12px;
+    }
+
+    .info-value {
+        color: #d5deea;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        text-align: right;
+
+        max-width: 60%;
+
+        word-break: break-word;
+    }
+
+    /* =====================================================
+       LIVE MONITORING
+       ===================================================== */
+
+    .live-header {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 18px;
+    }
+
+    .live-text {
+        color: #77879c;
+
+        font-size: 12px;
+    }
+
+    .live-badge {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        color: #4ade80;
+
+        background:
+            rgba(34, 197, 94, 0.08);
+
+        border:
+            1px solid
+            rgba(34, 197, 94, 0.18);
+
+        padding: 5px 8px;
+
+        border-radius: 12px;
+
+        font-size: 9px;
+
+        font-weight: 700;
+
+        letter-spacing: 0.5px;
+    }
+
+    .live-badge span {
+        width: 5px;
+        height: 5px;
+
+        border-radius: 50%;
+
+        background: #4ade80;
+
+        box-shadow:
+            0 0 7px
+            rgba(74, 222, 128, 0.70);
+
+        animation:
+            pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+
+        0% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.45;
+            transform: scale(0.75);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+    }
+
+    .monitor-row {
+        margin-bottom: 18px;
+    }
+
+    .monitor-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .monitor-label {
+        display: flex;
+
+        justify-content: space-between;
+
+        margin-bottom: 8px;
+
+        font-size: 11px;
+    }
+
+    .monitor-label span:first-child {
+        color: #8c9bb0;
+    }
+
+    .monitor-label span:last-child {
+        color: #d7e0eb;
+
+        font-weight: 600;
+    }
+
+    .monitor-track {
+        width: 100%;
+
+        height: 5px;
+
+        background: #192638;
+
+        border-radius: 10px;
+
+        overflow: hidden;
+    }
+
+    .monitor-bar {
+        width: 0%;
+
+        height: 100%;
+
+        border-radius: 10px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #2563eb,
+                #60a5fa
+            );
+
+        transition:
+            width 0.5s ease;
+    }
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .footer {
+        display: flex;
+
+        justify-content: flex-end;
+
+        gap: 5px;
+
+        color: #506078;
+
+        font-size: 10px;
+
+        margin-top: 17px;
+
+        padding-bottom: 5px;
+    }
+
+    #last-updated {
+        color: #708199;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1050px) {
+
+        .performance-grid {
+            grid-template-columns:
+                1fr;
+        }
+
+        .lower-grid {
+            grid-template-columns:
+                1fr;
+        }
+
+    }
+
+    @media (max-width: 700px) {
+
+        .sidebar {
+            width: 210px;
+        }
+
+        .main {
+            margin-left: 210px;
+
+            padding: 20px;
+        }
+
+        .header {
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            gap: 15px;
+        }
+
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<!-- =====================================================
+     SIDEBAR
+     ===================================================== -->
+
+<aside class="sidebar">
+
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ⌁
+        </div>
+
+        <span>
+            NetMonitor
+        </span>
+
+    </div>
+
+
+    <nav class="menu">
+
+
+        <a href="/">
+
+            <span class="menu-icon">
+                ▣
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <a href="/devices">
+
+            <span class="menu-icon">
+                ▦
+            </span>
+
+            <span>
+                Devices
+            </span>
+
+        </a>
+
+
+        <a href="/traffic">
+
+            <span class="menu-icon">
+                ↕
+            </span>
+
+            <span>
+                Network Traffic
+            </span>
+
+        </a>
+
+
+        <a href="/performance" class="active">
+
+            <span class="menu-icon">
+                ◒
+            </span>
+
+            <span>
+                Performance
+            </span>
+
+        </a>
+
+
+        <a href="/alerts">
+
+            <span class="menu-icon">
+                △
+            </span>
+
+            <span>
+                Alerts
+            </span>
+
+        </a>
+
+
+        <a href="/reports">
+
+            <span class="menu-icon">
+                ▤
+            </span>
+
+            <span>
+                Reports
+            </span>
+
+        </a>
+
+
+    </nav>
+
+
+    <div class="settings-link">
+
+        <a href="/settings">
+
+            <span class="menu-icon">
+                ⚙
+            </span>
+
+            <span>
+                Settings
+            </span>
+
+        </a>
+
+    </div>
+
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN
+     ===================================================== -->
+
+<main class="main">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+
+        <div class="header-left">
+
+            <div class="header-indicator"></div>
+
+            <div>
+
+                <h1>
+                    System Performance
+                </h1>
+
+                <p>
+                    Monitor CPU, memory, storage and system resources
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            System Online
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         PERFORMANCE CARDS
+         ================================================= -->
+
+    <div class="performance-grid">
+
+
+        <!-- CPU -->
+
+        <div class="performance-card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    CPU Usage
+                </div>
+
+                <div class="card-icon">
+                    ◒
+                </div>
+
+            </div>
+
+
+            <div
+                class="card-value"
+                id="cpu-value">
+                0%
+            </div>
+
+
+            <div class="progress-track">
+
+                <div
+                    class="progress-bar"
+                    id="cpu-bar">
+                </div>
+
+            </div>
+
+
+            <div class="card-footer">
+
+                <span>
+                    Processor load
+                </span>
+
+                <span id="cpu-frequency">
+                    --
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- MEMORY -->
+
+        <div class="performance-card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    Memory Usage
+                </div>
+
+                <div class="card-icon">
+                    ▤
+                </div>
+
+            </div>
+
+
+            <div
+                class="card-value"
+                id="memory-value">
+                0%
+            </div>
+
+
+            <div class="progress-track">
+
+                <div
+                    class="progress-bar"
+                    id="memory-bar">
+                </div>
+
+            </div>
+
+
+            <div class="card-footer">
+
+                <span>
+                    RAM utilization
+                </span>
+
+                <span id="memory-size">
+                    --
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- DISK -->
+
+        <div class="performance-card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    Disk Usage
+                </div>
+
+                <div class="card-icon">
+                    ▰
+                </div>
+
+            </div>
+
+
+            <div
+                class="card-value"
+                id="disk-value">
+                0%
+            </div>
+
+
+            <div class="progress-track">
+
+                <div
+                    class="progress-bar"
+                    id="disk-bar">
+                </div>
+
+            </div>
+
+
+            <div class="card-footer">
+
+                <span>
+                    Storage utilization
+                </span>
+
+                <span id="disk-size">
+                    --
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         LOWER PANELS
+         ================================================= -->
+
+    <div class="lower-grid">
+
+
+        <!-- SYSTEM INFORMATION -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+
+                    <div class="section-icon">
+                        ⓘ
+                    </div>
+
+                    <h2>
+                        System Information
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <div class="info-list">
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Hostname
+                        </span>
+
+                        <span
+                            class="info-value"
+                            id="hostname">
+                            Loading...
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            IP Address
+                        </span>
+
+                        <span
+                            class="info-value"
+                            id="ip-address">
+                            Loading...
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Operating System
+                        </span>
+
+                        <span
+                            class="info-value"
+                            id="platform">
+                            Loading...
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Processor
+                        </span>
+
+                        <span
+                            class="info-value"
+                            id="processor">
+                            Loading...
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            CPU Cores
+                        </span>
+
+                        <span
+                            class="info-value"
+                            id="cpu-cores">
+                            Loading...
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Python Version
+                        </span>
+
+                        <span
+                            class="info-value"
+                            id="python-version">
+                            Loading...
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- LIVE MONITORING -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+
+                    <div class="section-icon">
+                        ◉
+                    </div>
+
+                    <h2>
+                        Live Performance Monitoring
+                    </h2>
+
+                </div>
+
+
+                <div class="live-badge">
+
+                    <span></span>
+
+                    LIVE
+
+                </div>
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <div class="live-header">
+
+                    <div class="live-text">
+                        Resource utilization in real time
+                    </div>
+
+                </div>
+
+
+                <!-- CPU -->
+
+                <div class="monitor-row">
+
+                    <div class="monitor-label">
+
+                        <span>
+                            CPU
+                        </span>
+
+                        <span id="live-cpu">
+                            0%
+                        </span>
+
+                    </div>
+
+                    <div class="monitor-track">
+
+                        <div
+                            class="monitor-bar"
+                            id="live-cpu-bar">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MEMORY -->
+
+                <div class="monitor-row">
+
+                    <div class="monitor-label">
+
+                        <span>
+                            Memory
+                        </span>
+
+                        <span id="live-memory">
+                            0%
+                        </span>
+
+                    </div>
+
+                    <div class="monitor-track">
+
+                        <div
+                            class="monitor-bar"
+                            id="live-memory-bar">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DISK -->
+
+                <div class="monitor-row">
+
+                    <div class="monitor-label">
+
+                        <span>
+                            Disk
+                        </span>
+
+                        <span id="live-disk">
+                            0%
+                        </span>
+
+                    </div>
+
+                    <div class="monitor-track">
+
+                        <div
+                            class="monitor-bar"
+                            id="live-disk-bar">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        <span>
+            Last updated
+        </span>
+
+        <span id="last-updated">
+            --
+        </span>
+
+    </div>
+
+
+</main>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script>
+
+
+    function setValue(id, value) {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+
+            element.textContent = value;
+
+        }
+
+    }
+
+
+    function setBar(id, value) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+            return;
+        }
+
+        let number =
+            parseFloat(value);
+
+        if (Number.isNaN(number)) {
+            number = 0;
+        }
+
+        number =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    number
+                )
+            );
+
+        element.style.width =
+            number + "%";
+
+    }
+
+
+    /* =====================================================
+       LOAD PERFORMANCE
+       ===================================================== */
+
+    async function loadPerformance() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/performance",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Performance API error"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            const cpu =
+                data.cpu ??
+                data.cpu_percent ??
+                data.cpu_usage ??
+                0;
+
+
+            const memory =
+                data.memory ??
+                data.memory_percent ??
+                data.memory_usage ??
+                0;
+
+
+            const disk =
+                data.disk ??
+                data.disk_percent ??
+                data.disk_usage ??
+                0;
+
+
+            setValue(
+                "cpu-value",
+                Number(cpu).toFixed(1) + "%"
+            );
+
+
+            setValue(
+                "memory-value",
+                Number(memory).toFixed(1) + "%"
+            );
+
+
+            setValue(
+                "disk-value",
+                Number(disk).toFixed(1) + "%"
+            );
+
+
+            setBar(
+                "cpu-bar",
+                cpu
+            );
+
+
+            setBar(
+                "memory-bar",
+                memory
+            );
+
+
+            setBar(
+                "disk-bar",
+                disk
+            );
+
+
+            setValue(
+                "live-cpu",
+                Number(cpu).toFixed(1) + "%"
+            );
+
+
+            setValue(
+                "live-memory",
+                Number(memory).toFixed(1) + "%"
+            );
+
+
+            setValue(
+                "live-disk",
+                Number(disk).toFixed(1) + "%"
+            );
+
+
+            setBar(
+                "live-cpu-bar",
+                cpu
+            );
+
+
+            setBar(
+                "live-memory-bar",
+                memory
+            );
+
+
+            setBar(
+                "live-disk-bar",
+                disk
+            );
+
+
+            const frequency =
+                data.cpu_frequency ??
+                data.frequency ??
+                data.cpu_freq ??
+                null;
+
+
+            if (frequency) {
+
+                setValue(
+                    "cpu-frequency",
+                    Number(frequency).toFixed(0)
+                    + " MHz"
+                );
+
+            } else {
+
+                setValue(
+                    "cpu-frequency",
+                    "--"
+                );
+
+            }
+
+
+            const memoryTotal =
+                data.memory_total_gb ??
+                data.ram_total ??
+                null;
+
+
+            if (memoryTotal) {
+
+                setValue(
+                    "memory-size",
+                    Number(memoryTotal).toFixed(1)
+                    + " GB"
+                );
+
+            } else {
+
+                setValue(
+                    "memory-size",
+                    "--"
+                );
+
+            }
+
+
+            const diskTotal =
+                data.disk_total_gb ??
+                null;
+
+
+            if (diskTotal) {
+
+                setValue(
+                    "disk-size",
+                    Number(diskTotal).toFixed(1)
+                    + " GB"
+                );
+
+            } else {
+
+                setValue(
+                    "disk-size",
+                    "--"
+                );
+
+            }
+
+
+            setValue(
+                "last-updated",
+                new Date().toLocaleTimeString()
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Performance Error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       LOAD HOST INFORMATION
+       ===================================================== */
+
+    async function loadHostInformation() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/host",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Host API error"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            setValue(
+                "hostname",
+                data.hostname ??
+                data.host ??
+                "Unknown"
+            );
+
+
+            setValue(
+                "ip-address",
+                data.ip ??
+                data.ip_address ??
+                "Unknown"
+            );
+
+
+            setValue(
+                "platform",
+                data.platform ??
+                data.os ??
+                "Unknown"
+            );
+
+
+            setValue(
+                "processor",
+                data.processor ??
+                data.cpu ??
+                "Unknown"
+            );
+
+
+            setValue(
+                "cpu-cores",
+                data.cpu_cores ??
+                data.cores ??
+                "Unknown"
+            );
+
+
+            setValue(
+                "python-version",
+                data.python ??
+                data.python_version ??
+                "Unknown"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Host Information Error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       START MONITORING
+       ===================================================== */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            loadPerformance();
+
+            loadHostInformation();
+
+
+            /*
+             * Keep the existing live-monitoring
+             * behavior.
+             */
+
+            setInterval(
+                loadPerformance,
+                2000
+            );
+
+        }
+    );
+
+
+</script>
+```
+
+</body>
+
+</html>

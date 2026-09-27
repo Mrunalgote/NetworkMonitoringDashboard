@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NetMonitor | Network Traffic</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #080d18;
+        color: #e5e7eb;
+    }
+
+    /* ================= SIDEBAR ================= */
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 255px;
+        height: 100vh;
+
+        background: linear-gradient(
+            180deg,
+            #101827 0%,
+            #0d1422 100%
+        );
+
+        border-right: 1px solid #1d2939;
+        padding: 25px 18px;
+
+        z-index: 1000;
+
+        box-shadow:
+            8px 0 30px rgba(0,0,0,.20);
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        padding: 0 10px 30px;
+
+        color: #f8fafc;
+
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    .logo-icon {
+        width: 39px;
+        height: 39px;
+
+        border-radius: 11px;
+
+        background: linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: white;
+        font-size: 24px;
+
+        box-shadow:
+            0 0 20px rgba(37,99,235,.30);
+    }
+
+    .menu {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .menu a {
+        position: relative;
+
+        text-decoration: none;
+
+        color: #8996aa;
+
+        padding: 13px 14px;
+
+        border-radius: 9px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        font-size: 14px;
+
+        transition:
+            background .2s ease,
+            color .2s ease,
+            transform .2s ease;
+    }
+
+    .menu a:hover {
+        background: #172235;
+        color: #e8eef8;
+
+        transform: translateX(2px);
+    }
+
+    .menu a.active {
+        background: linear-gradient(
+            90deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+        color: white;
+
+        box-shadow:
+            0 7px 20px rgba(37,99,235,.22);
+    }
+
+    .menu a.active::before {
+        content: "";
+
+        position: absolute;
+
+        left: -18px;
+        top: 10px;
+
+        width: 3px;
+        height: 24px;
+
+        border-radius: 5px;
+
+        background: #60a5fa;
+    }
+
+    .menu-icon {
+        width: 20px;
+        text-align: center;
+        font-size: 17px;
+    }
+
+    .settings-link {
+        position: absolute;
+
+        bottom: 25px;
+
+        left: 18px;
+        right: 18px;
+
+        border-top: 1px solid #1d2939;
+
+        padding-top: 12px;
+    }
+
+    /* ================= MAIN ================= */
+
+    .main {
+        margin-left: 255px;
+
+        padding: 30px 35px;
+
+        min-height: 100vh;
+
+        position: relative;
+
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at 85% 0%,
+                rgba(37,99,235,.10),
+                transparent 28%
+            ),
+            #080d18;
+    }
+
+    .main::before {
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        opacity: .18;
+
+        background-image:
+            linear-gradient(
+                rgba(255,255,255,.025) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                rgba(255,255,255,.025) 1px,
+                transparent 1px
+            );
+
+        background-size: 40px 40px;
+    }
+
+    .main > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ================= HEADER ================= */
+
+    .header {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 30px;
+    }
+
+    .header-left {
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
+    }
+
+    .header-indicator {
+        width: 4px;
+        height: 45px;
+
+        border-radius: 5px;
+
+        background: linear-gradient(
+            180deg,
+            #60a5fa,
+            #2563eb
+        );
+
+        box-shadow:
+            0 0 12px rgba(59,130,246,.35);
+    }
+
+    .header h1 {
+        margin: 0 0 6px;
+
+        font-size: 28px;
+
+        color: #f8fafc;
+
+        letter-spacing: -.5px;
+    }
+
+    .header p {
+        margin: 0;
+
+        color: #78879c;
+
+        font-size: 14px;
+    }
+
+    .status {
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        background: rgba(34,197,94,.08);
+
+        border:
+            1px solid rgba(34,197,94,.20);
+
+        color: #4ade80;
+
+        padding: 9px 14px;
+
+        border-radius: 20px;
+
+        font-size: 12px;
+
+        font-weight: 600;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #4ade80;
+
+        box-shadow:
+            0 0 8px rgba(74,222,128,.70);
+    }
+
+    /* ================= SUMMARY ================= */
+
+    .summary-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
+        gap: 18px;
+
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        position: relative;
+
+        overflow: hidden;
+
+        background: linear-gradient(
+            145deg,
+            #111a2a,
+            #0e1624
+        );
+
+        border:
+            1px solid #1d2939;
+
+        border-radius: 13px;
+
+        padding: 21px;
+
+        box-shadow:
+            0 10px 30px rgba(0,0,0,.16);
+
+        transition:
+            transform .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-3px);
+
+        border-color: #2d4058;
+
+        box-shadow:
+            0 15px 35px rgba(0,0,0,.22);
+    }
+
+    .summary-top {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 11px;
+    }
+
+    .summary-title {
+        color: #8795a9;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        text-transform: uppercase;
+
+        letter-spacing: .5px;
+    }
+
+    .summary-icon {
+        width: 29px;
+        height: 29px;
+
+        border-radius: 8px;
+
+        background: #17263b;
+
+        color: #60a5fa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 14px;
+    }
+
+    .summary-value {
+        color: #f8fafc;
+
+        font-size: 25px;
+
+        font-weight: 700;
+    }
+
+    .summary-subtitle {
+        color: #5f7087;
+
+        font-size: 10px;
+
+        margin-top: 7px;
+    }
+
+    /* ================= CHART GRID ================= */
+
+    .chart-grid {
+        display: grid;
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 18px;
+    }
+
+    .panel {
+        background: linear-gradient(
+            145deg,
+            #111a2a,
+            #0e1624
+        );
+
+        border:
+            1px solid #1d2939;
+
+        border-radius: 13px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 10px 30px rgba(0,0,0,.18);
+    }
+
+    .panel-header {
+        padding: 20px 22px;
+
+        border-bottom:
+            1px solid #1d2939;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+    }
+
+    .panel-title {
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+    }
+
+    .section-icon {
+        width: 31px;
+        height: 31px;
+
+        border-radius: 8px;
+
+        background: #17263b;
+
+        color: #60a5fa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 14px;
+    }
+
+    .panel-title h2 {
+        margin: 0;
+
+        color: #f1f5f9;
+
+        font-size: 16px;
+    }
+
+    .panel-body {
+        padding: 20px 22px;
+    }
+
+    .chart-container {
+        height: 290px;
+
+        position: relative;
+    }
+
+    canvas {
+        max-width: 100%;
+    }
+
+    /* ================= LEGEND ================= */
+
+    .legend {
+        display: flex;
+
+        gap: 18px;
+
+        align-items: center;
+
+        margin-bottom: 12px;
+    }
+
+    .legend-item {
+        display: flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        color: #718198;
+
+        font-size: 10px;
+    }
+
+    .legend-dot {
+        width: 8px;
+        height: 8px;
+
+        border-radius: 50%;
+    }
+
+    .download-dot {
+        background: #3b82f6;
+
+        box-shadow:
+            0 0 8px rgba(59,130,246,.55);
+    }
+
+    .upload-dot {
+        background: #a855f7;
+
+        box-shadow:
+            0 0 8px rgba(168,85,247,.50);
+    }
+
+    /* ================= INFO ================= */
+
+    .info-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 12px;
+    }
+
+    .info-card {
+        background: #0d1625;
+
+        border:
+            1px solid #1a283a;
+
+        border-radius: 9px;
+
+        padding: 15px;
+    }
+
+    .info-label {
+        color: #63748a;
+
+        font-size: 9px;
+
+        text-transform: uppercase;
+
+        letter-spacing: .5px;
+
+        margin-bottom: 7px;
+    }
+
+    .info-value {
+        color: #dbe5f0;
+
+        font-size: 15px;
+
+        font-weight: 700;
+    }
+
+    .live-badge {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        color: #4ade80;
+
+        background:
+            rgba(34,197,94,.08);
+
+        border:
+            1px solid rgba(34,197,94,.18);
+
+        padding: 5px 8px;
+
+        border-radius: 12px;
+
+        font-size: 9px;
+
+        font-weight: 700;
+
+        letter-spacing: .5px;
+    }
+
+    .live-badge span {
+        width: 5px;
+        height: 5px;
+
+        border-radius: 50%;
+
+        background: #4ade80;
+
+        box-shadow:
+            0 0 7px rgba(74,222,128,.70);
+
+        animation:
+            pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+
+        0% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: .45;
+            transform: scale(.75);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+    }
+
+    /* ================= FOOTER ================= */
+
+    .footer {
+        display: flex;
+
+        justify-content: flex-end;
+
+        gap: 5px;
+
+        color: #506078;
+
+        font-size: 10px;
+
+        margin-top: 17px;
+
+        padding-bottom: 5px;
+    }
+
+    #last-updated {
+        color: #708199;
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 1050px) {
+
+        .summary-grid {
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+
+        .chart-grid {
+            grid-template-columns:
+                1fr;
+        }
+
+    }
+
+    @media (max-width: 700px) {
+
+        .sidebar {
+            width: 210px;
+        }
+
+        .main {
+            margin-left: 210px;
+            padding: 20px;
+        }
+
+        .summary-grid {
+            grid-template-columns:
+                1fr;
+        }
+
+        .header {
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            gap: 15px;
+        }
+
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ⌁
+        </div>
+
+        <span>
+            NetMonitor
+        </span>
+
+    </div>
+
+
+    <nav class="menu">
+
+        <a href="/">
+            <span class="menu-icon">▣</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/devices">
+            <span class="menu-icon">▦</span>
+            <span>Devices</span>
+        </a>
+
+        <a href="/traffic" class="active">
+            <span class="menu-icon">↕</span>
+            <span>Network Traffic</span>
+        </a>
+
+        <a href="/performance">
+            <span class="menu-icon">◒</span>
+            <span>Performance</span>
+        </a>
+
+        <a href="/alerts">
+            <span class="menu-icon">△</span>
+            <span>Alerts</span>
+        </a>
+
+        <a href="/reports">
+            <span class="menu-icon">▤</span>
+            <span>Reports</span>
+        </a>
+
+    </nav>
+
+
+    <div class="settings-link">
+
+        <a href="/settings">
+            <span class="menu-icon">⚙</span>
+            <span>Settings</span>
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+
+    <div class="header">
+
+        <div class="header-left">
+
+            <div class="header-indicator"></div>
+
+            <div>
+
+                <h1>
+                    Network Traffic
+                </h1>
+
+                <p>
+                    Real-time network upload and download monitoring
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            Network Online
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary-grid">
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    Download
+                </div>
+
+                <div class="summary-icon">
+                    ↓
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="download-value">
+
+                0 MB
+
+            </div>
+
+            <div class="summary-subtitle">
+                Total received data
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    Upload
+                </div>
+
+                <div class="summary-icon">
+                    ↑
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="upload-value">
+
+                0 MB
+
+            </div>
+
+            <div class="summary-subtitle">
+                Total transmitted data
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    Received Packets
+                </div>
+
+                <div class="summary-icon">
+                    ↓
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="received-packets">
+
+                0
+
+            </div>
+
+            <div class="summary-subtitle">
+                Network packets received
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    Sent Packets
+                </div>
+
+                <div class="summary-icon">
+                    ↑
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="sent-packets">
+
+                0
+
+            </div>
+
+            <div class="summary-subtitle">
+                Network packets transmitted
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- CHARTS -->
+
+    <div class="chart-grid">
+
+
+        <!-- LIVE TRAFFIC -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+
+                    <div class="section-icon">
+                        ↕
+                    </div>
+
+                    <h2>
+                        Live Traffic
+                    </h2>
+
+                </div>
+
+
+                <div class="live-badge">
+
+                    <span></span>
+
+                    LIVE
+
+                </div>
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <div class="legend">
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-dot download-dot">
+                        </span>
+
+                        Download
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-dot upload-dot">
+                        </span>
+
+                        Upload
+
+                    </div>
+
+                </div>
+
+
+                <div class="chart-container">
+
+                    <canvas id="trafficChart"></canvas>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- PACKET ACTIVITY -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+
+                    <div class="section-icon">
+                        ◌
+                    </div>
+
+                    <h2>
+                        Packet Activity
+                    </h2>
+
+                </div>
+
+
+                <div class="live-badge">
+
+                    <span></span>
+
+                    LIVE
+
+                </div>
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <div class="legend">
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-dot download-dot">
+                        </span>
+
+                        Received
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span
+                            class="legend-dot upload-dot">
+                        </span>
+
+                        Sent
+
+                    </div>
+
+                </div>
+
+
+                <div class="chart-container">
+
+                    <canvas id="packetChart"></canvas>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </div>
+
+
+    <!-- NETWORK INFORMATION -->
+
+    <section
+        class="panel"
+        style="margin-top:18px;">
+
+
+        <div class="panel-header">
+
+            <div class="panel-title">
+
+                <div class="section-icon">
+                    ℹ
+                </div>
+
+                <h2>
+                    Network Information
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="panel-body">
+
+
+            <div class="info-grid">
+
+
+                <div class="info-card">
+
+                    <div class="info-label">
+                        Download
+                    </div>
+
+                    <div
+                        class="info-value"
+                        id="info-download">
+
+                        0 MB
+
+                    </div>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <div class="info-label">
+                        Upload
+                    </div>
+
+                    <div
+                        class="info-value"
+                        id="info-upload">
+
+                        0 MB
+
+                    </div>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <div class="info-label">
+                        Packets Received
+                    </div>
+
+                    <div
+                        class="info-value"
+                        id="info-received-packets">
+
+                        0
+
+                    </div>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <div class="info-label">
+                        Packets Sent
+                    </div>
+
+                    <div
+                        class="info-value"
+                        id="info-sent-packets">
+
+                        0
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+    <div class="footer">
+
+        <span>
+            Last updated
+        </span>
+
+        <span id="last-updated">
+            --
+        </span>
+
+    </div>
+
+
+</main>
+
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+
+    let trafficChart;
+
+    let packetChart;
+
+
+    const maxPoints = 20;
+
+
+    const labels = [];
+
+    const downloadData = [];
+
+    const uploadData = [];
+
+    const receivedPacketData = [];
+
+    const sentPacketData = [];
+
+
+    let previousReceived = null;
+
+    let previousSent = null;
+
+    let previousPacketsReceived = null;
+
+    let previousPacketsSent = null;
+
+
+    let previousTime = null;
+
+
+    /* ================= FORMAT ================= */
+
+    function formatMB(bytes) {
+
+        return (
+            Number(bytes || 0) /
+            (1024 * 1024)
+        ).toFixed(2) + " MB";
+
+    }
+
+
+    function updateText(id, value) {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+
+            element.textContent =
+                value;
+
+        }
+
+    }
+
+
+    /* ================= CHARTS ================= */
+
+    function createCharts() {
+
+
+        trafficChart =
+            new Chart(
+                document.getElementById(
+                    "trafficChart"
+                ),
+                {
+
+                    type: "line",
+
+                    data: {
+
+                        labels: labels,
+
+                        datasets: [
+
+                            {
+
+                                label:
+                                    "Download",
+
+                                data:
+                                    downloadData,
+
+                                borderColor:
+                                    "#3b82f6",
+
+                                backgroundColor:
+                                    "rgba(59,130,246,0.10)",
+
+                                fill: true,
+
+                                borderWidth: 2.5,
+
+                                pointRadius: 0,
+
+                                pointHoverRadius: 5,
+
+                                tension: .4,
+
+                                cubicInterpolationMode:
+                                    "monotone"
+
+                            },
+
+
+                            {
+
+                                label:
+                                    "Upload",
+
+                                data:
+                                    uploadData,
+
+                                borderColor:
+                                    "#a855f7",
+
+                                backgroundColor:
+                                    "rgba(168,85,247,0.09)",
+
+                                fill: true,
+
+                                borderWidth: 2.5,
+
+                                pointRadius: 0,
+
+                                pointHoverRadius: 5,
+
+                                tension: .4,
+
+                                cubicInterpolationMode:
+                                    "monotone"
+
+                            }
+
+                        ]
+
+                    },
+
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        animation: {
+
+                            duration: 350
+
+                        },
+
+                        interaction: {
+
+                            intersect: false,
+
+                            mode: "index"
+
+                        },
+
+                        plugins: {
+
+                            legend: {
+                                display: false
+                            }
+
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,0.035)"
+
+                                },
+
+                                ticks: {
+
+                                    color: "#607188",
+
+                                    font: {
+                                        size: 9
+                                    },
+
+                                    maxTicksLimit: 8
+
+                                }
+
+                            },
+
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                min: 0,
+
+                                grace: "10%",
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,0.035)"
+
+                                },
+
+                                ticks: {
+
+                                    color: "#607188",
+
+                                    font: {
+                                        size: 9
+                                    },
+
+                                    callback:
+                                        function(value) {
+
+                                            return value +
+                                                " MB";
+
+                                        }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+
+        packetChart =
+            new Chart(
+                document.getElementById(
+                    "packetChart"
+                ),
+                {
+
+                    type: "line",
+
+                    data: {
+
+                        labels: labels,
+
+                        datasets: [
+
+                            {
+
+                                label:
+                                    "Received",
+
+                                data:
+                                    receivedPacketData,
+
+                                borderColor:
+                                    "#3b82f6",
+
+                                backgroundColor:
+                                    "rgba(59,130,246,0.08)",
+
+                                fill: true,
+
+                                borderWidth: 2.5,
+
+                                pointRadius: 0,
+
+                                pointHoverRadius: 5,
+
+                                tension: .35,
+
+                                cubicInterpolationMode:
+                                    "monotone"
+
+                            },
+
+
+                            {
+
+                                label:
+                                    "Sent",
+
+                                data:
+                                    sentPacketData,
+
+                                borderColor:
+                                    "#a855f7",
+
+                                backgroundColor:
+                                    "rgba(168,85,247,0.07)",
+
+                                fill: true,
+
+                                borderWidth: 2.5,
+
+                                pointRadius: 0,
+
+                                pointHoverRadius: 5,
+
+                                tension: .35,
+
+                                cubicInterpolationMode:
+                                    "monotone"
+
+                            }
+
+                        ]
+
+                    },
+
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        animation: {
+
+                            duration: 220
+
+                        },
+
+                        interaction: {
+
+                            intersect: false,
+
+                            mode: "index"
+
+                        },
+
+                        plugins: {
+
+                            legend: {
+                                display: false
+                            }
+
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,0.035)"
+
+                                },
+
+                                ticks: {
+
+                                    color: "#607188",
+
+                                    font: {
+                                        size: 9
+                                    },
+
+                                    maxTicksLimit: 8
+
+                                }
+
+                            },
+
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                min: 0,
+
+                                grace: "5%",
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,0.035)"
+
+                                },
+
+                                ticks: {
+
+                                    color: "#607188",
+
+                                    font: {
+                                        size: 9
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+    }
+
+
+    /* ================= LOAD DATA ================= */
+
+    async function loadTraffic() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/network?t=" +
+                    Date.now(),
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Network API error"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            const received =
+                Number(
+                    data.bytes_received ??
+                    data.received ??
+                    0
+                );
+
+
+            const sent =
+                Number(
+                    data.bytes_sent ??
+                    data.sent ??
+                    0
+                );
+
+
+            const packetsReceived =
+                Number(
+                    data.packets_received ??
+                    data.received_packets ??
+                    0
+                );
+
+
+            const packetsSent =
+                Number(
+                    data.packets_sent ??
+                    data.sent_packets ??
+                    0
+                );
+
+
+            /* ================= SUMMARY ================= */
+
+            updateText(
+                "download-value",
+                formatMB(received)
+            );
+
+
+            updateText(
+                "upload-value",
+                formatMB(sent)
+            );
+
+
+            updateText(
+                "received-packets",
+                packetsReceived.toLocaleString()
+            );
+
+
+            updateText(
+                "sent-packets",
+                packetsSent.toLocaleString()
+            );
+
+
+            updateText(
+                "info-download",
+                formatMB(received)
+            );
+
+
+            updateText(
+                "info-upload",
+                formatMB(sent)
+            );
+
+
+            updateText(
+                "info-received-packets",
+                packetsReceived.toLocaleString()
+            );
+
+
+            updateText(
+                "info-sent-packets",
+                packetsSent.toLocaleString()
+            );
+
+
+            /* ================= TIME ================= */
+
+            const currentTime =
+                Date.now();
+
+
+            const timeLabel =
+                new Date(
+                    currentTime
+                ).toLocaleTimeString();
+
+
+            /*
+                Calculate actual elapsed time
+                between two measurements.
+            */
+
+            let elapsedSeconds = 2;
+
+
+            if (previousTime !== null) {
+
+                elapsedSeconds =
+                    Math.max(
+                        .1,
+                        (
+                            currentTime -
+                            previousTime
+                        ) / 1000
+                    );
+
+            }
+
+
+            /* =================================================
+               LIVE TRAFFIC FIX
+
+               psutil gives cumulative bytes.
+
+               We calculate the difference and convert it
+               into MB per second.
+
+               This makes the graph respond to real network
+               activity instead of appearing flat.
+               ================================================= */
+
+
+            let downloadSpeed = 0;
+
+            let uploadSpeed = 0;
+
+
+            if (previousReceived !== null) {
+
+                const receivedDifference =
+                    received -
+                    previousReceived;
+
+
+                downloadSpeed =
+                    Math.max(
+                        0,
+                        receivedDifference /
+                        (1024 * 1024) /
+                        elapsedSeconds
+                    );
+
+            }
+
+
+            if (previousSent !== null) {
+
+                const sentDifference =
+                    sent -
+                    previousSent;
+
+
+                uploadSpeed =
+                    Math.max(
+                        0,
+                        sentDifference /
+                        (1024 * 1024) /
+                        elapsedSeconds
+                    );
+
+            }
+
+
+            /* ================= PACKETS ================= */
+
+            let receivedPacketSpeed = 0;
+
+            let sentPacketSpeed = 0;
+
+
+            if (
+                previousPacketsReceived !== null
+            ) {
+
+                receivedPacketSpeed =
+                    Math.max(
+                        0,
+                        packetsReceived -
+                        previousPacketsReceived
+                    );
+
+            }
+
+
+            if (
+                previousPacketsSent !== null
+            ) {
+
+                sentPacketSpeed =
+                    Math.max(
+                        0,
+                        packetsSent -
+                        previousPacketsSent
+                    );
+
+            }
+
+
+            /* ================= SAVE CURRENT ================= */
+
+            previousReceived =
+                received;
+
+            previousSent =
+                sent;
+
+            previousPacketsReceived =
+                packetsReceived;
+
+            previousPacketsSent =
+                packetsSent;
+
+            previousTime =
+                currentTime;
+
+
+            /* ================= ADD POINT ================= */
+
+            labels.push(
+                timeLabel
+            );
+
+
+            downloadData.push(
+                Number(
+                    downloadSpeed.toFixed(3)
+                )
+            );
+
+
+            uploadData.push(
+                Number(
+                    uploadSpeed.toFixed(3)
+                )
+            );
+
+
+            receivedPacketData.push(
+                receivedPacketSpeed
+            );
+
+
+            sentPacketData.push(
+                sentPacketSpeed
+            );
+
+
+            /* ================= KEEP 20 ================= */
+
+            while (
+                labels.length >
+                maxPoints
+            ) {
+
+                labels.shift();
+
+                downloadData.shift();
+
+                uploadData.shift();
+
+                receivedPacketData.shift();
+
+                sentPacketData.shift();
+
+            }
+
+
+            /* ================= UPDATE ================= */
+
+            trafficChart.update();
+
+            packetChart.update();
+
+
+            updateText(
+                "last-updated",
+                timeLabel
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Traffic Error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* ================= START ================= */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+
+            createCharts();
+
+
+            /*
+                Start with an initial zero point.
+            */
+
+            labels.push(
+                new Date().toLocaleTimeString()
+            );
+
+
+            downloadData.push(0);
+
+            uploadData.push(0);
+
+            receivedPacketData.push(0);
+
+            sentPacketData.push(0);
+
+
+            trafficChart.update("none");
+
+            packetChart.update("none");
+
+
+            loadTraffic();
+
+
+            setInterval(
+                loadTraffic,
+                2000
+            );
+
+
+        }
+    );
+
+
+</script>
+```
+
+</body>
+
+</html>

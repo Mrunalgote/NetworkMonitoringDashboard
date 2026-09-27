@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NetMonitor | Network Overview</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #080d18;
+        color: #e5e7eb;
+    }
+
+    /* =====================================================
+       SIDEBAR
+       ===================================================== */
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+
+        width: 255px;
+        height: 100vh;
+
+        background:
+            linear-gradient(
+                180deg,
+                #101827 0%,
+                #0d1422 100%
+            );
+
+        border-right: 1px solid #1d2939;
+
+        padding: 25px 18px;
+
+        z-index: 1000;
+
+        box-shadow:
+            8px 0 30px rgba(0, 0, 0, 0.20);
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        padding: 0 10px 30px;
+
+        color: #f8fafc;
+
+        font-size: 21px;
+
+        font-weight: 700;
+
+        letter-spacing: -0.3px;
+    }
+
+    .logo-icon {
+        width: 39px;
+        height: 39px;
+
+        border-radius: 11px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #3b82f6
+            );
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: white;
+
+        font-size: 24px;
+
+        box-shadow:
+            0 0 20px rgba(37, 99, 235, 0.30);
+    }
+
+    .menu {
+        display: flex;
+        flex-direction: column;
+
+        gap: 6px;
+    }
+
+    .menu a {
+        position: relative;
+
+        text-decoration: none;
+
+        color: #8996aa;
+
+        padding: 13px 14px;
+
+        border-radius: 9px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        font-size: 14px;
+
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .menu a:hover {
+        background: #172235;
+
+        color: #e8eef8;
+
+        transform: translateX(2px);
+    }
+
+    .menu a.active {
+        background:
+            linear-gradient(
+                90deg,
+                #2563eb,
+                #1d4ed8
+            );
+
+        color: white;
+
+        box-shadow:
+            0 7px 20px
+            rgba(37, 99, 235, 0.22);
+    }
+
+    .menu a.active::before {
+        content: "";
+
+        position: absolute;
+
+        left: -18px;
+
+        top: 10px;
+
+        width: 3px;
+
+        height: 24px;
+
+        border-radius: 5px;
+
+        background: #60a5fa;
+    }
+
+    .menu-icon {
+        width: 20px;
+
+        text-align: center;
+
+        font-size: 17px;
+    }
+
+    .settings-link {
+        position: absolute;
+
+        bottom: 25px;
+
+        left: 18px;
+        right: 18px;
+
+        border-top: 1px solid #1d2939;
+
+        padding-top: 12px;
+    }
+
+    /* =====================================================
+       MAIN
+       ===================================================== */
+
+    .main {
+        margin-left: 255px;
+
+        padding: 30px 35px;
+
+        min-height: 100vh;
+
+        position: relative;
+
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at 85% 0%,
+                rgba(37, 99, 235, 0.10),
+                transparent 28%
+            ),
+            radial-gradient(
+                circle at 30% 100%,
+                rgba(59, 130, 246, 0.04),
+                transparent 30%
+            ),
+            #080d18;
+    }
+
+    /* subtle background grid */
+
+    .main::before {
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        opacity: 0.18;
+
+        background-image:
+            linear-gradient(
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px
+            );
+
+        background-size: 40px 40px;
+    }
+
+    .main > * {
+        position: relative;
+
+        z-index: 1;
+    }
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .header {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 30px;
+    }
+
+    .header-left {
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
+    }
+
+    .header-indicator {
+        width: 4px;
+
+        height: 45px;
+
+        border-radius: 5px;
+
+        background:
+            linear-gradient(
+                180deg,
+                #60a5fa,
+                #2563eb
+            );
+
+        box-shadow:
+            0 0 12px
+            rgba(59, 130, 246, 0.35);
+    }
+
+    .header h1 {
+        margin: 0 0 6px;
+
+        font-size: 28px;
+
+        color: #f8fafc;
+
+        letter-spacing: -0.5px;
+    }
+
+    .header p {
+        margin: 0;
+
+        color: #78879c;
+
+        font-size: 14px;
+    }
+
+    .status {
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        background:
+            rgba(34, 197, 94, 0.08);
+
+        border:
+            1px solid
+            rgba(34, 197, 94, 0.20);
+
+        color: #4ade80;
+
+        padding: 9px 14px;
+
+        border-radius: 20px;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        box-shadow:
+            0 0 18px
+            rgba(34, 197, 94, 0.04);
+    }
+
+    .status-dot {
+        width: 7px;
+
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #4ade80;
+
+        box-shadow:
+            0 0 8px
+            rgba(74, 222, 128, 0.70);
+    }
+
+    /* =====================================================
+       STAT CARDS
+       ===================================================== */
+
+    .cards {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
+        gap: 18px;
+
+        margin-bottom: 24px;
+    }
+
+    .card {
+        position: relative;
+
+        overflow: hidden;
+
+        background:
+            linear-gradient(
+                145deg,
+                #111a2a,
+                #0e1624
+            );
+
+        border:
+            1px solid #1d2939;
+
+        border-radius: 13px;
+
+        padding: 21px;
+
+        box-shadow:
+            0 10px 30px
+            rgba(0, 0, 0, 0.16);
+
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .card::after {
+        content: "";
+
+        position: absolute;
+
+        width: 100px;
+
+        height: 100px;
+
+        right: -55px;
+
+        top: -55px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(37, 99, 235, 0.08);
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+
+        border-color: #2d4058;
+
+        box-shadow:
+            0 15px 35px
+            rgba(0, 0, 0, 0.22);
+    }
+
+    .card-top {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        margin-bottom: 11px;
+    }
+
+    .card-title {
+        color: #8795a9;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+    }
+
+    .card-icon {
+        width: 27px;
+
+        height: 27px;
+
+        border-radius: 7px;
+
+        background: #17263b;
+
+        color: #60a5fa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 13px;
+    }
+
+    .card-value {
+        color: #f8fafc;
+
+        font-size: 27px;
+
+        font-weight: 700;
+
+        letter-spacing: -0.5px;
+    }
+
+    .card-subtitle {
+        color: #5f7087;
+
+        font-size: 11px;
+
+        margin-top: 7px;
+    }
+
+    /* =====================================================
+       CONTENT GRID
+       ===================================================== */
+
+    .content-grid {
+        display: grid;
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 18px;
+
+        margin-bottom: 24px;
+    }
+
+    /* =====================================================
+       PANELS
+       ===================================================== */
+
+    .panel,
+    .device-panel {
+        background:
+            linear-gradient(
+                145deg,
+                #111a2a,
+                #0e1624
+            );
+
+        border:
+            1px solid #1d2939;
+
+        border-radius: 13px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 10px 30px
+            rgba(0, 0, 0, 0.16);
+    }
+
+    .panel-header,
+    .device-header {
+        padding: 19px 22px;
+
+        border-bottom:
+            1px solid #1d2939;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+    }
+
+    .panel-header-left {
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+    }
+
+    .section-icon {
+        width: 30px;
+
+        height: 30px;
+
+        border-radius: 8px;
+
+        background: #17263b;
+
+        color: #60a5fa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 14px;
+    }
+
+    .panel-header h2,
+    .device-header h2 {
+        margin: 0;
+
+        font-size: 16px;
+
+        color: #f1f5f9;
+    }
+
+    .panel-header p {
+        margin: 4px 0 0;
+
+        color: #607188;
+
+        font-size: 11px;
+    }
+
+    .panel-body {
+        padding: 21px 22px;
+    }
+
+    /* =====================================================
+       PERFORMANCE
+       ===================================================== */
+
+    .performance-item {
+        margin-bottom: 20px;
+    }
+
+    .performance-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .performance-label {
+        display: flex;
+
+        justify-content: space-between;
+
+        margin-bottom: 8px;
+
+        font-size: 12px;
+    }
+
+    .performance-label span:first-child {
+        color: #c3cedc;
+    }
+
+    .performance-label span:last-child {
+        color: #60a5fa;
+
+        font-weight: 600;
+    }
+
+    .progress {
+        width: 100%;
+
+        height: 7px;
+
+        background: #1a2637;
+
+        border-radius: 20px;
+
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+
+        width: 0%;
+
+        border-radius: 20px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #2563eb,
+                #60a5fa
+            );
+
+        box-shadow:
+            0 0 10px
+            rgba(59, 130, 246, 0.35);
+
+        transition:
+            width 0.5s ease;
+    }
+
+    /* =====================================================
+       NETWORK STATISTICS
+       ===================================================== */
+
+    .statistics {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 12px;
+    }
+
+    .stat-box {
+        position: relative;
+
+        background: #0c1422;
+
+        border:
+            1px solid #1b293b;
+
+        border-radius: 9px;
+
+        padding: 17px;
+
+        transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .stat-box:hover {
+        border-color: #2b405c;
+
+        background: #0f1929;
+    }
+
+    .stat-box::before {
+        content: "";
+
+        position: absolute;
+
+        left: 0;
+
+        top: 14px;
+
+        bottom: 14px;
+
+        width: 2px;
+
+        border-radius: 4px;
+
+        background: #2563eb;
+    }
+
+    .stat-box-title {
+        color: #62748b;
+
+        font-size: 11px;
+
+        margin-bottom: 7px;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.3px;
+    }
+
+    .stat-box-value {
+        color: #f1f5f9;
+
+        font-size: 18px;
+
+        font-weight: 600;
+    }
+
+    /* =====================================================
+       DEVICE PANEL
+       ===================================================== */
+
+    .device-header {
+        padding: 19px 22px;
+    }
+
+    .device-title {
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+    }
+
+    .device-count {
+        font-size: 10px;
+
+        color: #60a5fa;
+
+        background: #17263b;
+
+        padding: 4px 8px;
+
+        border-radius: 12px;
+    }
+
+    .refresh-btn {
+        border:
+            1px solid #29384d;
+
+        background: #162133;
+
+        color: #aebdd0;
+
+        padding: 8px 13px;
+
+        border-radius: 7px;
+
+        cursor: pointer;
+
+        font-size: 11px;
+
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+        background: #2563eb;
+
+        border-color: #2563eb;
+
+        color: white;
+    }
+
+    /* =====================================================
+       TABLE
+       ===================================================== */
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+
+        padding: 13px 20px;
+
+        background: #0c1422;
+
+        color: #607188;
+
+        font-size: 10px;
+
+        font-weight: 600;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+    }
+
+    td {
+        padding: 14px 20px;
+
+        border-top:
+            1px solid #192536;
+
+        color: #bac7d7;
+
+        font-size: 12px;
+    }
+
+    tr {
+        transition:
+            background 0.15s ease;
+    }
+
+    tr:hover td {
+        background:
+            rgba(30, 41, 59, 0.38);
+    }
+
+    .device-name {
+        color: #e5edf7;
+
+        font-weight: 600;
+    }
+
+    .ip-address {
+        color: #8091a8;
+
+        font-family: Consolas, monospace;
+
+        font-size: 11px;
+    }
+
+    .online,
+    .offline {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        font-weight: 600;
+
+        font-size: 11px;
+    }
+
+    .online {
+        color: #4ade80;
+    }
+
+    .offline {
+        color: #718198;
+    }
+
+    .online::before,
+    .offline::before {
+        content: "";
+
+        width: 6px;
+
+        height: 6px;
+
+        border-radius: 50%;
+    }
+
+    .online::before {
+        background: #4ade80;
+
+        box-shadow:
+            0 0 7px
+            rgba(74, 222, 128, 0.65);
+    }
+
+    .offline::before {
+        background: #64748b;
+    }
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .footer {
+        display: flex;
+
+        justify-content: flex-end;
+
+        gap: 5px;
+
+        color: #506078;
+
+        font-size: 10px;
+
+        margin-top: 17px;
+
+        padding-bottom: 5px;
+    }
+
+    #last-updated {
+        color: #708199;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1100px) {
+
+        .cards {
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+    @media (max-width: 700px) {
+
+        .sidebar {
+            width: 210px;
+        }
+
+        .main {
+            margin-left: 210px;
+
+            padding: 20px;
+        }
+
+        .cards {
+            grid-template-columns: 1fr;
+        }
+
+        .header {
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            gap: 15px;
+        }
+
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<!-- =====================================================
+     SIDEBAR
+     ===================================================== -->
+
+<aside class="sidebar">
+
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ⌁
+        </div>
+
+        <span>
+            NetMonitor
+        </span>
+
+    </div>
+
+
+    <nav class="menu">
+
+
+        <a href="/" class="active">
+
+            <span class="menu-icon">
+                ▣
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <a href="/devices">
+
+            <span class="menu-icon">
+                ▦
+            </span>
+
+            <span>
+                Devices
+            </span>
+
+        </a>
+
+
+        <a href="/traffic">
+
+            <span class="menu-icon">
+                ↕
+            </span>
+
+            <span>
+                Network Traffic
+            </span>
+
+        </a>
+
+
+        <a href="/performance">
+
+            <span class="menu-icon">
+                ◒
+            </span>
+
+            <span>
+                Performance
+            </span>
+
+        </a>
+
+
+        <a href="/alerts">
+
+            <span class="menu-icon">
+                △
+            </span>
+
+            <span>
+                Alerts
+            </span>
+
+        </a>
+
+
+        <a href="/reports">
+
+            <span class="menu-icon">
+                ▤
+            </span>
+
+            <span>
+                Reports
+            </span>
+
+        </a>
+
+
+    </nav>
+
+
+    <div class="settings-link">
+
+        <a href="/settings">
+
+            <span class="menu-icon">
+                ⚙
+            </span>
+
+            <span>
+                Settings
+            </span>
+
+        </a>
+
+    </div>
+
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN
+     ===================================================== -->
+
+<main class="main">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+
+        <div class="header-left">
+
+            <div class="header-indicator"></div>
+
+            <div>
+
+                <h1>
+                    Network Overview
+                </h1>
+
+                <p>
+                    Monitor your network activity and system performance
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            System Online
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         STAT CARDS
+         ================================================= -->
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    Total Devices
+                </div>
+
+                <div class="card-icon">
+                    ▦
+                </div>
+
+            </div>
+
+            <div
+                class="card-value"
+                id="total-devices">
+                0
+            </div>
+
+            <div class="card-subtitle">
+                Devices detected on network
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    Online Devices
+                </div>
+
+                <div class="card-icon">
+                    ●
+                </div>
+
+            </div>
+
+            <div
+                class="card-value"
+                id="online-devices">
+                0
+            </div>
+
+            <div class="card-subtitle">
+                Currently active
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    Offline Devices
+                </div>
+
+                <div class="card-icon">
+                    ○
+                </div>
+
+            </div>
+
+            <div
+                class="card-value"
+                id="offline-devices">
+                0
+            </div>
+
+            <div class="card-subtitle">
+                Currently inactive
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-title">
+                    Network Traffic
+                </div>
+
+                <div class="card-icon">
+                    ↕
+                </div>
+
+            </div>
+
+            <div
+                class="card-value"
+                id="traffic-value">
+                0 MB
+            </div>
+
+            <div class="card-subtitle">
+                Total network data
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         PERFORMANCE + NETWORK
+         ================================================= -->
+
+    <div class="content-grid">
+
+
+        <!-- SYSTEM PERFORMANCE -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div class="panel-header-left">
+
+                    <div class="section-icon">
+                        ◒
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            System Performance
+                        </h2>
+
+                        <p>
+                            Current resource utilization
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <div class="performance-item">
+
+                    <div class="performance-label">
+
+                        <span>
+                            CPU Usage
+                        </span>
+
+                        <span id="cpu-value">
+                            0%
+                        </span>
+
+                    </div>
+
+
+                    <div class="progress">
+
+                        <div
+                            class="progress-bar"
+                            id="cpu-bar">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="performance-item">
+
+                    <div class="performance-label">
+
+                        <span>
+                            Memory Usage
+                        </span>
+
+                        <span id="memory-value">
+                            0%
+                        </span>
+
+                    </div>
+
+
+                    <div class="progress">
+
+                        <div
+                            class="progress-bar"
+                            id="memory-bar">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="performance-item">
+
+                    <div class="performance-label">
+
+                        <span>
+                            Disk Usage
+                        </span>
+
+                        <span id="disk-value">
+                            0%
+                        </span>
+
+                    </div>
+
+
+                    <div class="progress">
+
+                        <div
+                            class="progress-bar"
+                            id="disk-bar">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- NETWORK STATISTICS -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div class="panel-header-left">
+
+                    <div class="section-icon">
+                        ↕
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Network Statistics
+                        </h2>
+
+                        <p>
+                            Live network activity
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <div class="statistics">
+
+
+                    <div class="stat-box">
+
+                        <div class="stat-box-title">
+                            Received
+                        </div>
+
+                        <div
+                            class="stat-box-value"
+                            id="received">
+                            0 MB
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-box">
+
+                        <div class="stat-box-title">
+                            Sent
+                        </div>
+
+                        <div
+                            class="stat-box-value"
+                            id="sent">
+                            0 MB
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-box">
+
+                        <div class="stat-box-title">
+                            Packets Received
+                        </div>
+
+                        <div
+                            class="stat-box-value"
+                            id="packets-received">
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-box">
+
+                        <div class="stat-box-title">
+                            Packets Sent
+                        </div>
+
+                        <div
+                            class="stat-box-value"
+                            id="packets-sent">
+                            0
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </div>
+
+
+    <!-- =================================================
+         CONNECTED DEVICES
+         ================================================= -->
+
+    <section class="device-panel">
+
+
+        <div class="device-header">
+
+
+            <div class="device-title">
+
+                <div class="section-icon">
+                    ▦
+                </div>
+
+                <h2>
+                    Connected Devices
+                </h2>
+
+                <span
+                    class="device-count"
+                    id="device-count">
+                    LIVE
+                </span>
+
+            </div>
+
+
+            <button
+                class="refresh-btn"
+                onclick="loadDevices()">
+
+                ↻ &nbsp; Refresh
+
+            </button>
+
+
+        </div>
+
+
+        <div class="table-container">
+
+
+            <table>
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Device
+                        </th>
+
+                        <th>
+                            IP Address
+                        </th>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <th>
+                            Interface
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="device-table">
+
+                    <tr>
+
+                        <td colspan="5">
+                            Loading devices...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        <span>
+            Last updated
+        </span>
+
+        <span id="last-updated">
+            --
+        </span>
+
+    </div>
+
+
+</main>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script>
+
+
+    /* =====================================================
+       FORMAT BYTES
+       ===================================================== */
+
+    function formatMB(bytes) {
+
+        if (!bytes || bytes <= 0) {
+            return "0 MB";
+        }
+
+        return (
+            bytes /
+            (1024 * 1024)
+        ).toFixed(2) + " MB";
+
+    }
+
+
+    /* =====================================================
+       ESCAPE HTML
+       ===================================================== */
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =====================================================
+       SYSTEM DATA
+       ===================================================== */
+
+    async function loadSystem() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/system",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+                throw new Error(
+                    "System API error"
+                );
+            }
+
+
+            const data =
+                await response.json();
+
+
+            const cpu =
+                Number(
+                    data.cpu ??
+                    data.cpu_percent ??
+                    data.cpu_usage ??
+                    0
+                );
+
+
+            const memory =
+                Number(
+                    data.memory ??
+                    data.memory_percent ??
+                    data.memory_usage ??
+                    0
+                );
+
+
+            const disk =
+                Number(
+                    data.disk ??
+                    data.disk_percent ??
+                    data.disk_usage ??
+                    0
+                );
+
+
+            document.getElementById(
+                "cpu-value"
+            ).textContent =
+                cpu.toFixed(1) + "%";
+
+
+            document.getElementById(
+                "memory-value"
+            ).textContent =
+                memory.toFixed(1) + "%";
+
+
+            document.getElementById(
+                "disk-value"
+            ).textContent =
+                disk.toFixed(1) + "%";
+
+
+            document.getElementById(
+                "cpu-bar"
+            ).style.width =
+                Math.min(cpu, 100) + "%";
+
+
+            document.getElementById(
+                "memory-bar"
+            ).style.width =
+                Math.min(memory, 100) + "%";
+
+
+            document.getElementById(
+                "disk-bar"
+            ).style.width =
+                Math.min(disk, 100) + "%";
+
+
+        } catch (error) {
+
+            console.error(
+                "System Error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       NETWORK DATA
+       ===================================================== */
+
+    async function loadNetwork() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/network",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+                throw new Error(
+                    "Network API error"
+                );
+            }
+
+
+            const data =
+                await response.json();
+
+
+            const received =
+                Number(
+                    data.bytes_received ??
+                    data.received ??
+                    0
+                );
+
+
+            const sent =
+                Number(
+                    data.bytes_sent ??
+                    data.sent ??
+                    0
+                );
+
+
+            const packetsReceived =
+                Number(
+                    data.packets_received ??
+                    0
+                );
+
+
+            const packetsSent =
+                Number(
+                    data.packets_sent ??
+                    0
+                );
+
+
+            document.getElementById(
+                "received"
+            ).textContent =
+                formatMB(received);
+
+
+            document.getElementById(
+                "sent"
+            ).textContent =
+                formatMB(sent);
+
+
+            document.getElementById(
+                "packets-received"
+            ).textContent =
+                packetsReceived
+                .toLocaleString();
+
+
+            document.getElementById(
+                "packets-sent"
+            ).textContent =
+                packetsSent
+                .toLocaleString();
+
+
+            document.getElementById(
+                "traffic-value"
+            ).textContent =
+                formatMB(
+                    received + sent
+                );
+
+
+        } catch (error) {
+
+            console.error(
+                "Network Error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       DEVICES
+       ===================================================== */
+
+    async function loadDevices() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/devices",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+                throw new Error(
+                    "Devices API error"
+                );
+            }
+
+
+            const data =
+                await response.json();
+
+
+            const devices =
+                Array.isArray(data)
+                    ? data
+                    : (
+                        data.devices || []
+                    );
+
+
+            const table =
+                document.getElementById(
+                    "device-table"
+                );
+
+
+            let online = 0;
+
+            let offline = 0;
+
+
+            if (devices.length === 0) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td colspan="5">
+                            No devices found
+                        </td>
+
+                    </tr>
+
+                `;
+
+            } else {
+
+
+                table.innerHTML =
+                    devices.map(
+                        device => {
+
+
+                            const status =
+                                String(
+                                    device.status ??
+                                    device.state ??
+                                    "Unknown"
+                                );
+
+
+                            if (
+                                status.toLowerCase()
+                                === "online"
+                            ) {
+
+                                online++;
+
+                            } else {
+
+                                offline++;
+
+                            }
+
+
+                            const statusClass =
+                                status.toLowerCase()
+                                === "online"
+                                    ? "online"
+                                    : "offline";
+
+
+                            const name =
+                                device.name ??
+                                device.hostname ??
+                                "Unknown";
+
+
+                            const ip =
+                                device.ip_address ??
+                                device.ip ??
+                                device.address ??
+                                "N/A";
+
+
+                            const type =
+                                device.device_type ??
+                                device.type ??
+                                "Unknown";
+
+
+                            const interfaceName =
+                                device.interface ??
+                                "Local System";
+
+
+                            return `
+
+                                <tr>
+
+                                    <td class="device-name">
+                                        ${escapeHTML(name)}
+                                    </td>
+
+                                    <td class="ip-address">
+                                        ${escapeHTML(ip)}
+                                    </td>
+
+                                    <td>
+                                        ${escapeHTML(type)}
+                                    </td>
+
+                                    <td>
+                                        ${escapeHTML(interfaceName)}
+                                    </td>
+
+                                    <td class="${statusClass}">
+                                        ${escapeHTML(status)}
+                                    </td>
+
+                                </tr>
+
+                            `;
+
+                        }
+                    ).join("");
+
+            }
+
+
+            document.getElementById(
+                "total-devices"
+            ).textContent =
+                devices.length;
+
+
+            document.getElementById(
+                "online-devices"
+            ).textContent =
+                online;
+
+
+            document.getElementById(
+                "offline-devices"
+            ).textContent =
+                offline;
+
+
+            document.getElementById(
+                "device-count"
+            ).textContent =
+                devices.length +
+                " DEVICES";
+
+
+        } catch (error) {
+
+            console.error(
+                "Devices Error:",
+                error
+            );
+
+
+            document.getElementById(
+                "device-table"
+            ).innerHTML = `
+
+                <tr>
+
+                    <td colspan="5">
+                        Unable to load devices
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CLOCK
+       ===================================================== */
+
+    function updateTime() {
+
+        document.getElementById(
+            "last-updated"
+        ).textContent =
+            new Date().toLocaleTimeString();
+
+    }
+
+
+    /* =====================================================
+       START DASHBOARD
+       ===================================================== */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            loadSystem();
+
+            loadNetwork();
+
+            loadDevices();
+
+            updateTime();
+
+
+            setInterval(
+                loadSystem,
+                2000
+            );
+
+
+            setInterval(
+                loadNetwork,
+                2000
+            );
+
+
+            setInterval(
+                loadDevices,
+                5000
+            );
+
+
+            setInterval(
+                updateTime,
+                1000
+            );
+
+        }
+    );
+
+
+</script>
+```
+
+</body>
+
+</html>

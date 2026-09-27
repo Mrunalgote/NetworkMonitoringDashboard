@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NetMonitor | Alerts</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #080d18;
+        color: #e5e7eb;
+    }
+
+    /* =====================================================
+       SIDEBAR
+       ===================================================== */
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+
+        width: 255px;
+        height: 100vh;
+
+        background:
+            linear-gradient(
+                180deg,
+                #101827 0%,
+                #0d1422 100%
+            );
+
+        border-right: 1px solid #1d2939;
+
+        padding: 25px 18px;
+
+        z-index: 1000;
+
+        box-shadow:
+            8px 0 30px rgba(0, 0, 0, 0.20);
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        padding: 0 10px 30px;
+
+        color: #f8fafc;
+
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    .logo-icon {
+        width: 39px;
+        height: 39px;
+
+        border-radius: 11px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #3b82f6
+            );
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: white;
+
+        font-size: 24px;
+
+        box-shadow:
+            0 0 20px
+            rgba(37, 99, 235, 0.30);
+    }
+
+    .menu {
+        display: flex;
+        flex-direction: column;
+
+        gap: 6px;
+    }
+
+    .menu a {
+        position: relative;
+
+        text-decoration: none;
+
+        color: #8996aa;
+
+        padding: 13px 14px;
+
+        border-radius: 9px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        font-size: 14px;
+
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .menu a:hover {
+        background: #172235;
+
+        color: #e8eef8;
+
+        transform: translateX(2px);
+    }
+
+    .menu a.active {
+        background:
+            linear-gradient(
+                90deg,
+                #2563eb,
+                #1d4ed8
+            );
+
+        color: white;
+
+        box-shadow:
+            0 7px 20px
+            rgba(37, 99, 235, 0.22);
+    }
+
+    .menu a.active::before {
+        content: "";
+
+        position: absolute;
+
+        left: -18px;
+        top: 10px;
+
+        width: 3px;
+        height: 24px;
+
+        border-radius: 5px;
+
+        background: #60a5fa;
+    }
+
+    .menu-icon {
+        width: 20px;
+
+        text-align: center;
+
+        font-size: 17px;
+    }
+
+    .settings-link {
+        position: absolute;
+
+        bottom: 25px;
+
+        left: 18px;
+        right: 18px;
+
+        border-top: 1px solid #1d2939;
+
+        padding-top: 12px;
+    }
+
+    /* =====================================================
+       MAIN
+       ===================================================== */
+
+    .main {
+        margin-left: 255px;
+
+        padding: 30px 35px;
+
+        min-height: 100vh;
+
+        position: relative;
+
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at 85% 0%,
+                rgba(37, 99, 235, 0.10),
+                transparent 28%
+            ),
+            #080d18;
+    }
+
+    .main::before {
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        opacity: 0.18;
+
+        background-image:
+            linear-gradient(
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px
+            );
+
+        background-size: 40px 40px;
+    }
+
+    .main > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .header {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 30px;
+    }
+
+    .header-left {
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
+    }
+
+    .header-indicator {
+        width: 4px;
+
+        height: 45px;
+
+        border-radius: 5px;
+
+        background:
+            linear-gradient(
+                180deg,
+                #60a5fa,
+                #2563eb
+            );
+
+        box-shadow:
+            0 0 12px
+            rgba(59, 130, 246, 0.35);
+    }
+
+    .header h1 {
+        margin: 0 0 6px;
+
+        font-size: 28px;
+
+        color: #f8fafc;
+
+        letter-spacing: -0.5px;
+    }
+
+    .header p {
+        margin: 0;
+
+        color: #78879c;
+
+        font-size: 14px;
+    }
+
+    .status {
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        background:
+            rgba(34, 197, 94, 0.08);
+
+        border:
+            1px solid
+            rgba(34, 197, 94, 0.20);
+
+        color: #4ade80;
+
+        padding: 9px 14px;
+
+        border-radius: 20px;
+
+        font-size: 12px;
+
+        font-weight: 600;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #4ade80;
+
+        box-shadow:
+            0 0 8px
+            rgba(74, 222, 128, 0.70);
+    }
+
+    /* =====================================================
+       SUMMARY CARDS
+       ===================================================== */
+
+    .summary-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 18px;
+
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        position: relative;
+
+        overflow: hidden;
+
+        background:
+            linear-gradient(
+                145deg,
+                #111a2a,
+                #0e1624
+            );
+
+        border:
+            1px solid #1d2939;
+
+        border-radius: 13px;
+
+        padding: 21px;
+
+        box-shadow:
+            0 10px 30px
+            rgba(0, 0, 0, 0.16);
+
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-3px);
+
+        border-color: #2d4058;
+
+        box-shadow:
+            0 15px 35px
+            rgba(0, 0, 0, 0.22);
+    }
+
+    .summary-top {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 12px;
+    }
+
+    .summary-title {
+        color: #8795a9;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+    }
+
+    .summary-icon {
+        width: 29px;
+        height: 29px;
+
+        border-radius: 8px;
+
+        background: #17263b;
+
+        color: #60a5fa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 14px;
+    }
+
+    .summary-value {
+        color: #f8fafc;
+
+        font-size: 29px;
+
+        font-weight: 700;
+    }
+
+    .summary-subtitle {
+        margin-top: 7px;
+
+        color: #5f7087;
+
+        font-size: 10px;
+    }
+
+    /* =====================================================
+       ALERT CONTENT GRID
+       ===================================================== */
+
+    .content-grid {
+        display: grid;
+
+        grid-template-columns:
+            1.35fr 1fr;
+
+        gap: 18px;
+    }
+
+    .panel {
+        background:
+            linear-gradient(
+                145deg,
+                #111a2a,
+                #0e1624
+            );
+
+        border:
+            1px solid #1d2939;
+
+        border-radius: 13px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 10px 30px
+            rgba(0, 0, 0, 0.18);
+    }
+
+    .panel-header {
+        padding: 20px 22px;
+
+        border-bottom:
+            1px solid #1d2939;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+    }
+
+    .panel-title {
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+    }
+
+    .section-icon {
+        width: 31px;
+        height: 31px;
+
+        border-radius: 8px;
+
+        background: #17263b;
+
+        color: #60a5fa;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 14px;
+    }
+
+    .panel-title h2 {
+        margin: 0;
+
+        color: #f1f5f9;
+
+        font-size: 16px;
+    }
+
+    .panel-body {
+        padding: 20px 22px;
+    }
+
+    /* =====================================================
+       CURRENT ALERTS
+       ===================================================== */
+
+    .alert-list {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 10px;
+    }
+
+    .alert-item {
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
+
+        padding: 14px;
+
+        border-radius: 9px;
+
+        background: #0d1625;
+
+        border: 1px solid #1a283a;
+    }
+
+    .alert-indicator {
+        width: 9px;
+        height: 9px;
+
+        flex-shrink: 0;
+
+        border-radius: 50%;
+
+        background: #4ade80;
+
+        box-shadow:
+            0 0 9px
+            rgba(74, 222, 128, 0.50);
+    }
+
+    .alert-item.warning .alert-indicator {
+        background: #fbbf24;
+
+        box-shadow:
+            0 0 9px
+            rgba(251, 191, 36, 0.45);
+    }
+
+    .alert-item.critical .alert-indicator {
+        background: #f87171;
+
+        box-shadow:
+            0 0 9px
+            rgba(248, 113, 113, 0.45);
+    }
+
+    .alert-info {
+        flex: 1;
+    }
+
+    .alert-title {
+        color: #dbe5f0;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        margin-bottom: 4px;
+    }
+
+    .alert-description {
+        color: #66778d;
+
+        font-size: 10px;
+
+        line-height: 1.5;
+    }
+
+    .alert-level {
+        font-size: 9px;
+
+        font-weight: 700;
+
+        padding: 5px 8px;
+
+        border-radius: 10px;
+
+        background:
+            rgba(74, 222, 128, 0.08);
+
+        color: #4ade80;
+
+        border:
+            1px solid
+            rgba(74, 222, 128, 0.15);
+    }
+
+    .alert-item.warning .alert-level {
+        color: #fbbf24;
+
+        background:
+            rgba(251, 191, 36, 0.08);
+
+        border-color:
+            rgba(251, 191, 36, 0.15);
+    }
+
+    .alert-item.critical .alert-level {
+        color: #f87171;
+
+        background:
+            rgba(248, 113, 113, 0.08);
+
+        border-color:
+            rgba(248, 113, 113, 0.15);
+    }
+
+    .no-alerts {
+        padding: 35px 20px;
+
+        text-align: center;
+
+        color: #66778d;
+
+        font-size: 12px;
+    }
+
+    .no-alerts-icon {
+        font-size: 28px;
+
+        color: #4ade80;
+
+        margin-bottom: 10px;
+    }
+
+    /* =====================================================
+       THRESHOLDS
+       ===================================================== */
+
+    .threshold-list {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 0;
+    }
+
+    .threshold-row {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        padding: 15px 0;
+
+        border-bottom:
+            1px solid #192536;
+    }
+
+    .threshold-row:last-child {
+        border-bottom: none;
+    }
+
+    .threshold-name {
+        color: #8b9aae;
+
+        font-size: 12px;
+    }
+
+    .threshold-value {
+        color: #dce6f2;
+
+        font-size: 12px;
+
+        font-weight: 700;
+
+        background: #17263b;
+
+        padding: 6px 10px;
+
+        border-radius: 7px;
+    }
+
+    .threshold-note {
+        margin-top: 17px;
+
+        padding: 12px;
+
+        border-radius: 8px;
+
+        background:
+            rgba(59, 130, 246, 0.06);
+
+        border:
+            1px solid
+            rgba(59, 130, 246, 0.12);
+
+        color: #65758b;
+
+        font-size: 10px;
+
+        line-height: 1.6;
+    }
+
+    /* =====================================================
+       LIVE INDICATOR
+       ===================================================== */
+
+    .live-badge {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        color: #4ade80;
+
+        background:
+            rgba(34, 197, 94, 0.08);
+
+        border:
+            1px solid
+            rgba(34, 197, 94, 0.18);
+
+        padding: 5px 8px;
+
+        border-radius: 12px;
+
+        font-size: 9px;
+
+        font-weight: 700;
+
+        letter-spacing: 0.5px;
+    }
+
+    .live-badge span {
+        width: 5px;
+        height: 5px;
+
+        border-radius: 50%;
+
+        background: #4ade80;
+
+        box-shadow:
+            0 0 7px
+            rgba(74, 222, 128, 0.70);
+
+        animation:
+            pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+
+        0% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.45;
+            transform: scale(0.75);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+    }
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .footer {
+        display: flex;
+
+        justify-content: flex-end;
+
+        gap: 5px;
+
+        color: #506078;
+
+        font-size: 10px;
+
+        margin-top: 17px;
+
+        padding-bottom: 5px;
+    }
+
+    #last-updated {
+        color: #708199;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1000px) {
+
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-grid {
+            grid-template-columns:
+                repeat(3, 1fr);
+        }
+
+    }
+
+    @media (max-width: 700px) {
+
+        .sidebar {
+            width: 210px;
+        }
+
+        .main {
+            margin-left: 210px;
+
+            padding: 20px;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .header {
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            gap: 15px;
+        }
+
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<!-- =====================================================
+     SIDEBAR
+     ===================================================== -->
+
+<aside class="sidebar">
+
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ⌁
+        </div>
+
+        <span>
+            NetMonitor
+        </span>
+
+    </div>
+
+
+    <nav class="menu">
+
+
+        <a href="/">
+
+            <span class="menu-icon">
+                ▣
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <a href="/devices">
+
+            <span class="menu-icon">
+                ▦
+            </span>
+
+            <span>
+                Devices
+            </span>
+
+        </a>
+
+
+        <a href="/traffic">
+
+            <span class="menu-icon">
+                ↕
+            </span>
+
+            <span>
+                Network Traffic
+            </span>
+
+        </a>
+
+
+        <a href="/performance">
+
+            <span class="menu-icon">
+                ◒
+            </span>
+
+            <span>
+                Performance
+            </span>
+
+        </a>
+
+
+        <a href="/alerts" class="active">
+
+            <span class="menu-icon">
+                △
+            </span>
+
+            <span>
+                Alerts
+            </span>
+
+        </a>
+
+
+        <a href="/reports">
+
+            <span class="menu-icon">
+                ▤
+            </span>
+
+            <span>
+                Reports
+            </span>
+
+        </a>
+
+
+    </nav>
+
+
+    <div class="settings-link">
+
+        <a href="/settings">
+
+            <span class="menu-icon">
+                ⚙
+            </span>
+
+            <span>
+                Settings
+            </span>
+
+        </a>
+
+    </div>
+
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN
+     ===================================================== -->
+
+<main class="main">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+
+        <div class="header-left">
+
+            <div class="header-indicator"></div>
+
+            <div>
+
+                <h1>
+                    Network Alerts
+                </h1>
+
+                <p>
+                    Monitor system thresholds and network conditions
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            System Online
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         SUMMARY
+         ================================================= -->
+
+    <div class="summary-grid">
+
+
+        <!-- ACTIVE ALERTS -->
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    Active Alerts
+                </div>
+
+                <div class="summary-icon">
+                    △
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="active-alerts">
+                0
+            </div>
+
+            <div class="summary-subtitle">
+                Currently triggered
+            </div>
+
+        </div>
+
+
+        <!-- WARNINGS -->
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    Warnings
+                </div>
+
+                <div class="summary-icon">
+                    !
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="warning-alerts">
+                0
+            </div>
+
+            <div class="summary-subtitle">
+                Threshold warnings
+            </div>
+
+        </div>
+
+
+        <!-- SYSTEM STATUS -->
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    System Status
+                </div>
+
+                <div class="summary-icon">
+                    ●
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="system-status">
+                Normal
+            </div>
+
+            <div class="summary-subtitle">
+                Real-time system condition
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         CONTENT
+         ================================================= -->
+
+    <div class="content-grid">
+
+
+        <!-- CURRENT ALERTS -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+
+                    <div class="section-icon">
+                        △
+                    </div>
+
+                    <h2>
+                        Current Alerts
+                    </h2>
+
+                </div>
+
+
+                <div class="live-badge">
+
+                    <span></span>
+
+                    LIVE
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="panel-body"
+                id="alerts-container">
+
+                <div class="no-alerts">
+
+                    <div class="no-alerts-icon">
+                        ✓
+                    </div>
+
+                    No active alerts
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ALERT THRESHOLDS -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+
+                    <div class="section-icon">
+                        ⚙
+                    </div>
+
+                    <h2>
+                        Alert Thresholds
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <div class="threshold-list">
+
+
+                    <div class="threshold-row">
+
+                        <span class="threshold-name">
+                            CPU Usage
+                        </span>
+
+                        <span
+                            class="threshold-value"
+                            id="cpu-threshold">
+                            80%
+                        </span>
+
+                    </div>
+
+
+                    <div class="threshold-row">
+
+                        <span class="threshold-name">
+                            Memory Usage
+                        </span>
+
+                        <span
+                            class="threshold-value"
+                            id="memory-threshold">
+                            80%
+                        </span>
+
+                    </div>
+
+
+                    <div class="threshold-row">
+
+                        <span class="threshold-name">
+                            Disk Usage
+                        </span>
+
+                        <span
+                            class="threshold-value"
+                            id="disk-threshold">
+                            80%
+                        </span>
+
+                    </div>
+
+
+                    <div class="threshold-row">
+
+                        <span class="threshold-name">
+                            Network Traffic
+                        </span>
+
+                        <span
+                            class="threshold-value"
+                            id="network-threshold">
+                            100 MB
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="threshold-note">
+
+                    Alert thresholds can be adjusted from the
+                    Settings page. Changes are automatically
+                    reflected here during live monitoring.
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        <span>
+            Last updated
+        </span>
+
+        <span id="last-updated">
+            --
+        </span>
+
+    </div>
+
+
+</main>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script>
+
+
+    /* =====================================================
+       DEFAULT SETTINGS
+       ===================================================== */
+
+    const defaultSettings = {
+
+        cpu: 80,
+
+        memory: 80,
+
+        disk: 80,
+
+        network: 100
+
+    };
+
+
+    /* =====================================================
+       GET SETTINGS
+       ===================================================== */
+
+    function getSettings() {
+
+        try {
+
+            const saved =
+                localStorage.getItem(
+                    "netmonitorSettings"
+                );
+
+
+            if (!saved) {
+
+                return defaultSettings;
+
+            }
+
+
+            const parsed =
+                JSON.parse(saved);
+
+
+            return {
+
+                cpu:
+                    Number(
+                        parsed.cpu ??
+                        defaultSettings.cpu
+                    ),
+
+                memory:
+                    Number(
+                        parsed.memory ??
+                        defaultSettings.memory
+                    ),
+
+                disk:
+                    Number(
+                        parsed.disk ??
+                        defaultSettings.disk
+                    ),
+
+                network:
+                    Number(
+                        parsed.network ??
+                        defaultSettings.network
+                    )
+
+            };
+
+        } catch (error) {
+
+            console.error(
+                "Settings Error:",
+                error
+            );
+
+            return defaultSettings;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       UPDATE THRESHOLD DISPLAY
+       ===================================================== */
+
+    function updateThresholdDisplay() {
+
+        const settings =
+            getSettings();
+
+
+        document.getElementById(
+            "cpu-threshold"
+        ).textContent =
+            settings.cpu + "%";
+
+
+        document.getElementById(
+            "memory-threshold"
+        ).textContent =
+            settings.memory + "%";
+
+
+        document.getElementById(
+            "disk-threshold"
+        ).textContent =
+            settings.disk + "%";
+
+
+        document.getElementById(
+            "network-threshold"
+        ).textContent =
+            settings.network + " MB";
+
+    }
+
+
+    /* =====================================================
+       CREATE ALERT
+       ===================================================== */
+
+    function createAlert(
+        title,
+        description,
+        level
+    ) {
+
+        return `
+
+            <div class="alert-item ${level}">
+
+                <div class="alert-indicator"></div>
+
+                <div class="alert-info">
+
+                    <div class="alert-title">
+                        ${title}
+                    </div>
+
+                    <div class="alert-description">
+                        ${description}
+                    </div>
+
+                </div>
+
+                <div class="alert-level">
+                    ${level.toUpperCase()}
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       LOAD ALERTS
+       ===================================================== */
+
+    async function loadAlerts() {
+
+        try {
+
+            const settings =
+                getSettings();
+
+
+            const systemResponse =
+                await fetch(
+                    "/api/system",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            const networkResponse =
+                await fetch(
+                    "/api/network",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (
+                !systemResponse.ok ||
+                !networkResponse.ok
+            ) {
+
+                throw new Error(
+                    "Alert API error"
+                );
+
+            }
+
+
+            const system =
+                await systemResponse.json();
+
+
+            const network =
+                await networkResponse.json();
+
+
+            const cpu =
+                Number(
+                    system.cpu ??
+                    system.cpu_percent ??
+                    system.cpu_usage ??
+                    0
+                );
+
+
+            const memory =
+                Number(
+                    system.memory ??
+                    system.memory_percent ??
+                    system.memory_usage ??
+                    0
+                );
+
+
+            const disk =
+                Number(
+                    system.disk ??
+                    system.disk_percent ??
+                    system.disk_usage ??
+                    0
+                );
+
+
+            const received =
+                Number(
+                    network.bytes_received ??
+                    network.received ??
+                    0
+                );
+
+
+            const sent =
+                Number(
+                    network.bytes_sent ??
+                    network.sent ??
+                    0
+                );
+
+
+            const networkMB =
+                (
+                    received +
+                    sent
+                ) / (
+                    1024 * 1024
+                );
+
+
+            const alerts = [];
+
+
+            /* CPU */
+
+            if (
+                cpu >=
+                settings.cpu + 10
+            ) {
+
+                alerts.push(
+                    createAlert(
+                        "High CPU Usage",
+                        "CPU usage has reached " +
+                        cpu.toFixed(1) +
+                        "%.",
+                        "critical"
+                    )
+                );
+
+            } else if (
+                cpu >= settings.cpu
+            ) {
+
+                alerts.push(
+                    createAlert(
+                        "CPU Usage Warning",
+                        "CPU usage is " +
+                        cpu.toFixed(1) +
+                        "% and has crossed the configured threshold.",
+                        "warning"
+                    )
+                );
+
+            }
+
+
+            /* MEMORY */
+
+            if (
+                memory >=
+                settings.memory + 10
+            ) {
+
+                alerts.push(
+                    createAlert(
+                        "High Memory Usage",
+                        "Memory usage has reached " +
+                        memory.toFixed(1) +
+                        "%.",
+                        "critical"
+                    )
+                );
+
+            } else if (
+                memory >= settings.memory
+            ) {
+
+                alerts.push(
+                    createAlert(
+                        "Memory Usage Warning",
+                        "Memory usage is " +
+                        memory.toFixed(1) +
+                        "% and has crossed the configured threshold.",
+                        "warning"
+                    )
+                );
+
+            }
+
+
+            /* DISK */
+
+            if (
+                disk >=
+                settings.disk + 10
+            ) {
+
+                alerts.push(
+                    createAlert(
+                        "High Disk Usage",
+                        "Disk usage has reached " +
+                        disk.toFixed(1) +
+                        "%.",
+                        "critical"
+                    )
+                );
+
+            } else if (
+                disk >= settings.disk
+            ) {
+
+                alerts.push(
+                    createAlert(
+                        "Disk Usage Warning",
+                        "Disk usage is " +
+                        disk.toFixed(1) +
+                        "% and has crossed the configured threshold.",
+                        "warning"
+                    )
+                );
+
+            }
+
+
+            /* NETWORK */
+
+            if (
+                networkMB >=
+                settings.network + 10
+            ) {
+
+                alerts.push(
+                    createAlert(
+                        "High Network Traffic",
+                        "Current network traffic is " +
+                        networkMB.toFixed(2) +
+                        " MB.",
+                        "critical"
+                    )
+                );
+
+            } else if (
+                networkMB >= settings.network
+            ) {
+
+                alerts.push(
+                    createAlert(
+                        "Network Traffic Warning",
+                        "Current network traffic is " +
+                        networkMB.toFixed(2) +
+                        " MB and has crossed the configured threshold.",
+                        "warning"
+                    )
+                );
+
+            }
+
+
+            const container =
+                document.getElementById(
+                    "alerts-container"
+                );
+
+
+            let warningCount = 0;
+
+            let criticalCount = 0;
+
+
+            alerts.forEach(
+                alert => {
+
+                    if (
+                        alert.includes(
+                            'class="alert-item warning"'
+                        )
+                    ) {
+
+                        warningCount++;
+
+                    }
+
+                    if (
+                        alert.includes(
+                            'class="alert-item critical"'
+                        )
+                    ) {
+
+                        criticalCount++;
+
+                    }
+
+                }
+            );
+
+
+            if (alerts.length === 0) {
+
+                container.innerHTML = `
+
+                    <div class="no-alerts">
+
+                        <div class="no-alerts-icon">
+                            ✓
+                        </div>
+
+                        No active alerts
+
+                    </div>
+
+                `;
+
+            } else {
+
+                container.innerHTML =
+                    `<div class="alert-list">
+                        ${alerts.join("")}
+                    </div>`;
+
+            }
+
+
+            document.getElementById(
+                "active-alerts"
+            ).textContent =
+                alerts.length;
+
+
+            document.getElementById(
+                "warning-alerts"
+            ).textContent =
+                warningCount;
+
+
+            const systemStatus =
+                document.getElementById(
+                    "system-status"
+                );
+
+
+            if (criticalCount > 0) {
+
+                systemStatus.textContent =
+                    "Critical";
+
+                systemStatus.style.color =
+                    "#f87171";
+
+            } else if (
+                warningCount > 0
+            ) {
+
+                systemStatus.textContent =
+                    "Warning";
+
+                systemStatus.style.color =
+                    "#fbbf24";
+
+            } else {
+
+                systemStatus.textContent =
+                    "Normal";
+
+                systemStatus.style.color =
+                    "#f8fafc";
+
+            }
+
+
+            document.getElementById(
+                "last-updated"
+            ).textContent =
+                new Date().toLocaleTimeString();
+
+
+        } catch (error) {
+
+            console.error(
+                "Alerts Error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       START
+       ===================================================== */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            updateThresholdDisplay();
+
+            loadAlerts();
+
+
+            setInterval(
+                function() {
+
+                    updateThresholdDisplay();
+
+                    loadAlerts();
+
+                },
+                2000
+            );
+
+        }
+    );
+
+
+</script>
+```
+
+</body>
+
+</html>

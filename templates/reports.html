@@ -1,0 +1,3407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NetMonitor | Reports</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #080d18;
+    color: #e5e7eb;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    width: 255px;
+    height: 100vh;
+
+    background:
+        linear-gradient(
+            180deg,
+            #101827 0%,
+            #0d1422 100%
+        );
+
+    border-right: 1px solid #1d2939;
+
+    padding: 25px 18px;
+
+    z-index: 1000;
+
+    box-shadow:
+        8px 0 30px rgba(0, 0, 0, 0.20);
+}
+
+
+.logo {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 10px 30px;
+
+    color: #f8fafc;
+
+    font-size: 21px;
+    font-weight: 700;
+}
+
+
+.logo-icon {
+    width: 39px;
+    height: 39px;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    font-size: 24px;
+
+    box-shadow:
+        0 0 20px
+        rgba(37, 99, 235, 0.30);
+}
+
+
+.menu {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+.menu a {
+    position: relative;
+
+    text-decoration: none;
+
+    color: #8996aa;
+
+    padding: 13px 14px;
+
+    border-radius: 9px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    font-size: 14px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.menu a:hover {
+    background: #172235;
+
+    color: #e8eef8;
+
+    transform: translateX(2px);
+}
+
+
+.menu a.active {
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color: white;
+
+    box-shadow:
+        0 7px 20px
+        rgba(37, 99, 235, 0.22);
+}
+
+
+.menu a.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: -18px;
+    top: 10px;
+
+    width: 3px;
+    height: 24px;
+
+    border-radius: 5px;
+
+    background: #60a5fa;
+}
+
+
+.menu-icon {
+    width: 20px;
+
+    text-align: center;
+
+    font-size: 17px;
+}
+
+
+.settings-link {
+    position: absolute;
+
+    bottom: 25px;
+
+    left: 18px;
+    right: 18px;
+
+    border-top: 1px solid #1d2939;
+
+    padding-top: 12px;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.main {
+    margin-left: 255px;
+
+    padding: 30px 35px;
+
+    min-height: 100vh;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 85% 0%,
+            rgba(37, 99, 235, 0.10),
+            transparent 28%
+        ),
+        #080d18;
+}
+
+
+.main::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: 0.18;
+
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,0.025) 1px,
+            transparent 1px
+        );
+
+    background-size: 40px 40px;
+}
+
+
+.main > * {
+    position: relative;
+
+    z-index: 1;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 30px;
+}
+
+
+.header-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+}
+
+
+.header-indicator {
+    width: 4px;
+
+    height: 45px;
+
+    border-radius: 5px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #60a5fa,
+            #2563eb
+        );
+
+    box-shadow:
+        0 0 12px
+        rgba(59, 130, 246, 0.35);
+}
+
+
+.header h1 {
+    margin: 0 0 6px;
+
+    font-size: 28px;
+
+    color: #f8fafc;
+
+    letter-spacing: -0.5px;
+}
+
+
+.header p {
+    margin: 0;
+
+    color: #78879c;
+
+    font-size: 14px;
+}
+
+
+.status {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    background:
+        rgba(34, 197, 94, 0.08);
+
+    border:
+        1px solid
+        rgba(34, 197, 94, 0.20);
+
+    color: #4ade80;
+
+    padding: 9px 14px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #4ade80;
+
+    box-shadow:
+        0 0 8px
+        rgba(74, 222, 128, 0.70);
+}
+
+
+/* =====================================================
+   SUMMARY CARDS
+===================================================== */
+
+.summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 24px;
+}
+
+
+.summary-card {
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            #111a2a,
+            #0e1624
+        );
+
+    border:
+        1px solid #1d2939;
+
+    border-radius: 13px;
+
+    padding: 21px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.16);
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.summary-card:hover {
+    transform: translateY(-3px);
+
+    border-color: #2d4058;
+
+    box-shadow:
+        0 15px 35px
+        rgba(0, 0, 0, 0.22);
+}
+
+
+.summary-top {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 11px;
+}
+
+
+.summary-title {
+    color: #8795a9;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+}
+
+
+.summary-icon {
+    width: 29px;
+    height: 29px;
+
+    border-radius: 8px;
+
+    background: #17263b;
+
+    color: #60a5fa;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 14px;
+}
+
+
+.summary-value {
+    color: #f8fafc;
+
+    font-size: 27px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.summary-subtitle {
+    color: #5f7087;
+
+    font-size: 10px;
+
+    margin-top: 7px;
+}
+
+
+/* =====================================================
+   REPORT GRID
+===================================================== */
+
+.report-grid {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1.45fr;
+
+    gap: 18px;
+}
+
+
+.panel {
+    background:
+        linear-gradient(
+            145deg,
+            #111a2a,
+            #0e1624
+        );
+
+    border:
+        1px solid #1d2939;
+
+    border-radius: 13px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.18);
+}
+
+
+.panel-header {
+    padding: 20px 22px;
+
+    border-bottom:
+        1px solid #1d2939;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+.panel-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.section-icon {
+    width: 31px;
+    height: 31px;
+
+    border-radius: 8px;
+
+    background: #17263b;
+
+    color: #60a5fa;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 14px;
+}
+
+
+.panel-title h2 {
+    margin: 0;
+
+    color: #f1f5f9;
+
+    font-size: 16px;
+}
+
+
+.panel-body {
+    padding: 20px 22px;
+}
+
+
+/* =====================================================
+   AVAILABLE REPORTS
+===================================================== */
+
+.report-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+.report-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 14px;
+
+    background: #0d1625;
+
+    border:
+        1px solid #1a283a;
+
+    border-radius: 9px;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.report-item:hover {
+    background: #111e31;
+
+    border-color: #29405c;
+}
+
+
+.report-icon {
+    width: 35px;
+    height: 35px;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background: #17263b;
+
+    color: #60a5fa;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 15px;
+}
+
+
+.report-info {
+    flex: 1;
+}
+
+
+.report-name {
+    color: #dbe5f0;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    margin-bottom: 4px;
+}
+
+
+.report-description {
+    color: #66778d;
+
+    font-size: 10px;
+
+    line-height: 1.4;
+}
+
+
+.view-btn {
+    border:
+        1px solid #29384d;
+
+    background: #162133;
+
+    color: #aebdd0;
+
+    padding: 7px 10px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 10px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.view-btn:hover {
+    background: #2563eb;
+
+    border-color: #2563eb;
+
+    color: white;
+}
+
+
+/* =====================================================
+   GENERATE REPORT
+===================================================== */
+
+.generate-box {
+    margin-top: 15px;
+
+    padding: 15px;
+
+    border-radius: 9px;
+
+    background:
+        rgba(37, 99, 235, 0.06);
+
+    border:
+        1px solid
+        rgba(59, 130, 246, 0.12);
+}
+
+
+.generate-text {
+    color: #718198;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+
+    margin-bottom: 12px;
+}
+
+
+.generate-btn {
+    width: 100%;
+
+    border: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color: white;
+
+    padding: 11px 14px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 8px 20px
+        rgba(37, 99, 235, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.generate-btn:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 11px 25px
+        rgba(37, 99, 235, 0.25);
+}
+
+
+/* =====================================================
+   SYSTEM REPORT TABLE
+===================================================== */
+
+.report-table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+
+.report-table th {
+    text-align: left;
+
+    padding: 13px 14px;
+
+    background: #0c1422;
+
+    color: #607188;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+}
+
+
+.report-table td {
+    padding: 14px;
+
+    border-top:
+        1px solid #192536;
+
+    color: #b9c7d8;
+
+    font-size: 11px;
+}
+
+
+.report-table td:first-child {
+    color: #8797ab;
+
+    font-weight: 600;
+}
+
+
+.report-table td:last-child {
+    color: #dce6f2;
+
+    font-weight: 600;
+}
+
+
+.report-table tr:hover td {
+    background:
+        rgba(30, 41, 59, 0.35);
+}
+
+
+.report-status {
+    margin-top: 15px;
+
+    padding: 11px 13px;
+
+    border-radius: 8px;
+
+    background: #0d1625;
+
+    border:
+        1px solid #1a283a;
+
+    color: #687990;
+
+    font-size: 10px;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   LIVE BADGE
+===================================================== */
+
+.live-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: #4ade80;
+
+    background:
+        rgba(34, 197, 94, 0.08);
+
+    border:
+        1px solid
+        rgba(34, 197, 94, 0.18);
+
+    padding: 5px 8px;
+
+    border-radius: 12px;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+}
+
+
+.live-badge span {
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: #4ade80;
+
+    box-shadow:
+        0 0 7px
+        rgba(74, 222, 128, 0.70);
+
+    animation:
+        pulse 1.5s infinite;
+}
+
+
+@keyframes pulse {
+
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.45;
+        transform: scale(0.75);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 5px;
+
+    color: #506078;
+
+    font-size: 10px;
+
+    margin-top: 17px;
+
+    padding-bottom: 5px;
+}
+
+
+#last-updated {
+    color: #708199;
+}
+
+
+/* =====================================================
+   REPORT MODAL
+===================================================== */
+
+.report-modal {
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(2, 6, 15, 0.78);
+
+    backdrop-filter: blur(8px);
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 25px;
+
+    z-index: 5000;
+}
+
+
+.report-modal.show {
+    display: flex;
+}
+
+
+.modal-box {
+    width: min(760px, 95vw);
+
+    max-height: 88vh;
+
+    overflow-y: auto;
+
+    background:
+        linear-gradient(
+            145deg,
+            #111a2a,
+            #0b1320
+        );
+
+    border:
+        1px solid #263850;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 30px 80px
+        rgba(0, 0, 0, 0.55),
+
+        0 0 40px
+        rgba(37, 99, 235, 0.08);
+
+    animation:
+        modalIn 0.2s ease;
+}
+
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+.modal-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 20px 23px;
+
+    border-bottom:
+        1px solid #1d2939;
+
+    position: sticky;
+
+    top: 0;
+
+    background:
+        rgba(14, 22, 36, 0.96);
+
+    backdrop-filter: blur(10px);
+
+    z-index: 2;
+}
+
+
+.modal-title-area {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.modal-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #172b4d,
+            #14233a
+        );
+
+    color: #60a5fa;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 17px;
+
+    border:
+        1px solid #243b59;
+}
+
+
+.modal-title {
+    color: #f8fafc;
+
+    font-size: 17px;
+
+    font-weight: 700;
+}
+
+
+.modal-subtitle {
+    color: #65768c;
+
+    font-size: 10px;
+
+    margin-top: 4px;
+}
+
+
+.close-btn {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 8px;
+
+    border:
+        1px solid #29384d;
+
+    background: #121e30;
+
+    color: #91a0b4;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition: 0.2s;
+}
+
+
+.close-btn:hover {
+    background: #dc2626;
+
+    border-color: #dc2626;
+
+    color: white;
+}
+
+
+.modal-content {
+    padding: 23px;
+}
+
+
+/* =====================================================
+   MODAL STAT GRID
+===================================================== */
+
+.modal-stat-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+
+.modal-stat {
+    background: #0c1625;
+
+    border:
+        1px solid #1b2a3d;
+
+    border-radius: 10px;
+
+    padding: 15px;
+}
+
+
+.modal-stat-label {
+    color: #667991;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
+
+    margin-bottom: 8px;
+}
+
+
+.modal-stat-value {
+    color: #f8fafc;
+
+    font-size: 21px;
+
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   MODAL TABLE
+===================================================== */
+
+.modal-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    overflow: hidden;
+
+    border:
+        1px solid #1b2a3d;
+
+    border-radius: 10px;
+}
+
+
+.modal-table th {
+    background: #0a1321;
+
+    color: #61738b;
+
+    text-align: left;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    padding: 12px;
+}
+
+
+.modal-table td {
+    padding: 12px;
+
+    border-top:
+        1px solid #1b2a3d;
+
+    color: #c5d0de;
+
+    font-size: 11px;
+}
+
+
+.modal-table td:first-child {
+    color: #8da0b8;
+
+    font-weight: 600;
+}
+
+
+.modal-table td:last-child {
+    color: #e5edf7;
+
+    font-weight: 600;
+}
+
+
+.modal-note {
+    margin-top: 15px;
+
+    padding: 11px 13px;
+
+    background: #0c1625;
+
+    border:
+        1px solid #1b2a3d;
+
+    border-radius: 8px;
+
+    color: #65768c;
+
+    font-size: 10px;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   DEVICE ROWS
+===================================================== */
+
+.device-row {
+    display: grid;
+
+    grid-template-columns:
+        1.4fr 1fr 0.8fr;
+
+    gap: 10px;
+
+    padding: 13px;
+
+    background: #0c1625;
+
+    border:
+        1px solid #1b2a3d;
+
+    border-radius: 9px;
+
+    margin-bottom: 8px;
+}
+
+
+.device-name {
+    color: #dbe5f0;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+.device-ip {
+    color: #7f91a8;
+
+    font-size: 11px;
+}
+
+
+.device-status {
+    color: #4ade80;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    text-align: right;
+}
+
+
+/* =====================================================
+   MODAL FOOTER
+===================================================== */
+
+.modal-footer {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    padding-top: 18px;
+}
+
+
+.modal-close-action {
+    border:
+        1px solid #29384d;
+
+    background: #162133;
+
+    color: #b5c2d3;
+
+    padding: 9px 16px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 11px;
+}
+
+
+.modal-close-action:hover {
+    background: #2563eb;
+
+    border-color: #2563eb;
+
+    color: white;
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading {
+    text-align: center;
+
+    padding: 35px;
+
+    color: #718198;
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1050px) {
+
+    .summary-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .report-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 210px;
+    }
+
+    .main {
+        margin-left: 210px;
+
+        padding: 20px;
+    }
+
+    .summary-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+    .modal-stat-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .device-row {
+        grid-template-columns:
+            1fr;
+    }
+
+    .device-status {
+        text-align: left;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ⌁
+        </div>
+
+        <span>
+            NetMonitor
+        </span>
+
+    </div>
+
+
+    <nav class="menu">
+
+
+        <a href="/">
+
+            <span class="menu-icon">
+                ▣
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <a href="/devices">
+
+            <span class="menu-icon">
+                ▦
+            </span>
+
+            <span>
+                Devices
+            </span>
+
+        </a>
+
+
+        <a href="/traffic">
+
+            <span class="menu-icon">
+                ↕
+            </span>
+
+            <span>
+                Network Traffic
+            </span>
+
+        </a>
+
+
+        <a href="/performance">
+
+            <span class="menu-icon">
+                ◒
+            </span>
+
+            <span>
+                Performance
+            </span>
+
+        </a>
+
+
+        <a href="/alerts">
+
+            <span class="menu-icon">
+                △
+            </span>
+
+            <span>
+                Alerts
+            </span>
+
+        </a>
+
+
+        <a href="/reports" class="active">
+
+            <span class="menu-icon">
+                ▤
+            </span>
+
+            <span>
+                Reports
+            </span>
+
+        </a>
+
+
+    </nav>
+
+
+    <div class="settings-link">
+
+        <a href="/settings">
+
+            <span class="menu-icon">
+                ⚙
+            </span>
+
+            <span>
+                Settings
+            </span>
+
+        </a>
+
+    </div>
+
+
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+
+        <div class="header-left">
+
+            <div class="header-indicator"></div>
+
+            <div>
+
+                <h1>
+                    Network Reports
+                </h1>
+
+                <p>
+                    View system statistics and generate monitoring reports
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            System Online
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         SUMMARY CARDS
+    ================================================= -->
+
+    <div class="summary-grid">
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    Network Status
+                </div>
+
+                <div class="summary-icon">
+                    ●
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="network-status">
+
+                Online
+
+            </div>
+
+            <div class="summary-subtitle">
+                Current connection status
+            </div>
+
+        </div>
+
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    Total Devices
+                </div>
+
+                <div class="summary-icon">
+                    ▦
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="total-devices">
+
+                0
+
+            </div>
+
+            <div class="summary-subtitle">
+                Devices detected
+            </div>
+
+        </div>
+
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    Memory Usage
+                </div>
+
+                <div class="summary-icon">
+                    ▤
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="memory-usage">
+
+                0%
+
+            </div>
+
+            <div class="summary-subtitle">
+                Current RAM utilization
+            </div>
+
+        </div>
+
+
+
+        <div class="summary-card">
+
+            <div class="summary-top">
+
+                <div class="summary-title">
+                    Network Traffic
+                </div>
+
+                <div class="summary-icon">
+                    ↕
+                </div>
+
+            </div>
+
+            <div
+                class="summary-value"
+                id="network-traffic">
+
+                0 MB
+
+            </div>
+
+            <div class="summary-subtitle">
+                Total transferred data
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         REPORT CONTENT
+    ================================================= -->
+
+    <div class="report-grid">
+
+
+        <!-- AVAILABLE REPORTS -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+
+                    <div class="section-icon">
+                        ▤
+                    </div>
+
+                    <h2>
+                        Available Reports
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <div class="report-list">
+
+
+                    <!-- SYSTEM PERFORMANCE -->
+
+                    <div class="report-item">
+
+                        <div class="report-icon">
+                            ◒
+                        </div>
+
+                        <div class="report-info">
+
+                            <div class="report-name">
+                                System Performance
+                            </div>
+
+                            <div class="report-description">
+                                CPU, memory and disk utilization
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="view-btn"
+                            onclick="viewReport('System Performance')">
+
+                            View
+
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- NETWORK TRAFFIC -->
+
+                    <div class="report-item">
+
+                        <div class="report-icon">
+                            ↕
+                        </div>
+
+                        <div class="report-info">
+
+                            <div class="report-name">
+                                Network Traffic
+                            </div>
+
+                            <div class="report-description">
+                                Upload and download statistics
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="view-btn"
+                            onclick="viewReport('Network Traffic')">
+
+                            View
+
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- DEVICE REPORT -->
+
+                    <div class="report-item">
+
+                        <div class="report-icon">
+                            ▦
+                        </div>
+
+                        <div class="report-info">
+
+                            <div class="report-name">
+                                Device Report
+                            </div>
+
+                            <div class="report-description">
+                                Connected devices and interfaces
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="view-btn"
+                            onclick="viewReport('Device Report')">
+
+                            View
+
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- GENERATE -->
+
+                <div class="generate-box">
+
+                    <div class="generate-text">
+
+                        Generate a complete text report containing
+                        the current system performance, network
+                        traffic and connected device information.
+
+                    </div>
+
+
+                    <button
+                        class="generate-btn"
+                        onclick="generateReport()">
+
+                        ↓ &nbsp; Generate Full Report
+
+                    </button>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- CURRENT SYSTEM REPORT -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+
+                    <div class="section-icon">
+                        ◉
+                    </div>
+
+                    <h2>
+                        Current System Report
+                    </h2>
+
+                </div>
+
+
+                <div class="live-badge">
+
+                    <span></span>
+
+                    LIVE
+
+                </div>
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <table class="report-table">
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Metric
+                            </th>
+
+                            <th>
+                                Current Value
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        <tr>
+
+                            <td>
+                                CPU Usage
+                            </td>
+
+                            <td id="report-cpu">
+                                0%
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Memory Usage
+                            </td>
+
+                            <td id="report-memory">
+                                0%
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Disk Usage
+                            </td>
+
+                            <td id="report-disk">
+                                0%
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Download
+                            </td>
+
+                            <td id="report-download">
+                                0 MB
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Upload
+                            </td>
+
+                            <td id="report-upload">
+                                0 MB
+                            </td>
+
+                        </tr>
+
+
+                    </tbody>
+
+
+                </table>
+
+
+                <div
+                    class="report-status"
+                    id="report-status">
+
+                    Report data is being updated automatically.
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </div>
+
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        <span>
+            Last updated
+        </span>
+
+        <span id="last-updated">
+            --
+        </span>
+
+    </div>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     REPORT VIEW MODAL
+===================================================== -->
+
+<div
+    class="report-modal"
+    id="reportModal">
+
+
+    <div class="modal-box">
+
+
+        <!-- MODAL HEADER -->
+
+        <div class="modal-header">
+
+
+            <div class="modal-title-area">
+
+
+                <div
+                    class="modal-icon"
+                    id="modalIcon">
+
+                    ◒
+
+                </div>
+
+
+                <div>
+
+                    <div
+                        class="modal-title"
+                        id="modalTitle">
+
+                        Report
+
+                    </div>
+
+
+                    <div
+                        class="modal-subtitle"
+                        id="modalSubtitle">
+
+                        Live monitoring information
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <button
+                class="close-btn"
+                onclick="closeReportModal()">
+
+                ×
+
+            </button>
+
+
+        </div>
+
+
+
+        <!-- MODAL CONTENT -->
+
+        <div
+            class="modal-content"
+            id="modalContent">
+
+            <div class="loading">
+                Loading report...
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function setText(id, value) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+
+        element.textContent =
+            value;
+
+    }
+
+}
+
+
+function formatMB(bytes) {
+
+    const value =
+        Number(bytes || 0) /
+        (1024 * 1024);
+
+    return value.toFixed(2) + " MB";
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =====================================================
+   LOAD REPORT DATA
+===================================================== */
+
+async function loadReportData() {
+
+    try {
+
+        const [
+            systemResponse,
+            networkResponse,
+            devicesResponse
+        ] = await Promise.all([
+
+            fetch(
+                "/api/system",
+                {
+                    cache: "no-store"
+                }
+            ),
+
+            fetch(
+                "/api/network",
+                {
+                    cache: "no-store"
+                }
+            ),
+
+            fetch(
+                "/api/devices",
+                {
+                    cache: "no-store"
+                }
+            )
+
+        ]);
+
+
+        if (
+            !systemResponse.ok ||
+            !networkResponse.ok ||
+            !devicesResponse.ok
+        ) {
+
+            throw new Error(
+                "Report API error"
+            );
+
+        }
+
+
+        const system =
+            await systemResponse.json();
+
+
+        const network =
+            await networkResponse.json();
+
+
+        const devices =
+            await devicesResponse.json();
+
+
+        /* CPU */
+
+        const cpu =
+            Number(
+                system.cpu ??
+                system.cpu_percent ??
+                system.cpu_usage ??
+                0
+            );
+
+
+        /* MEMORY */
+
+        const memory =
+            Number(
+                system.memory ??
+                system.memory_percent ??
+                system.memory_usage ??
+                0
+            );
+
+
+        /* DISK */
+
+        const disk =
+            Number(
+                system.disk ??
+                system.disk_percent ??
+                system.disk_usage ??
+                0
+            );
+
+
+        /* NETWORK */
+
+        const received =
+            Number(
+                network.bytes_received ??
+                network.received ??
+                0
+            );
+
+
+        const sent =
+            Number(
+                network.bytes_sent ??
+                network.sent ??
+                0
+            );
+
+
+        const totalTraffic =
+            received + sent;
+
+
+        /* DEVICES */
+
+        const deviceList =
+            Array.isArray(devices)
+                ? devices
+                : (
+                    devices.devices || []
+                );
+
+
+        /* SUMMARY */
+
+        setText(
+            "total-devices",
+            deviceList.length
+        );
+
+
+        setText(
+            "memory-usage",
+            memory.toFixed(1) + "%"
+        );
+
+
+        setText(
+            "network-traffic",
+            formatMB(totalTraffic)
+        );
+
+
+        setText(
+            "network-status",
+            "Online"
+        );
+
+
+        /* TABLE */
+
+        setText(
+            "report-cpu",
+            cpu.toFixed(1) + "%"
+        );
+
+
+        setText(
+            "report-memory",
+            memory.toFixed(1) + "%"
+        );
+
+
+        setText(
+            "report-disk",
+            disk.toFixed(1) + "%"
+        );
+
+
+        setText(
+            "report-download",
+            formatMB(received)
+        );
+
+
+        setText(
+            "report-upload",
+            formatMB(sent)
+        );
+
+
+        setText(
+            "last-updated",
+            new Date().toLocaleTimeString()
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Report Error:",
+            error
+        );
+
+
+        setText(
+            "network-status",
+            "Unavailable"
+        );
+
+
+        setText(
+            "report-status",
+            "Unable to retrieve live report data."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   VIEW REPORT
+===================================================== */
+
+async function viewReport(reportName) {
+
+    const modal =
+        document.getElementById(
+            "reportModal"
+        );
+
+
+    const content =
+        document.getElementById(
+            "modalContent"
+        );
+
+
+    const title =
+        document.getElementById(
+            "modalTitle"
+        );
+
+
+    const subtitle =
+        document.getElementById(
+            "modalSubtitle"
+        );
+
+
+    const icon =
+        document.getElementById(
+            "modalIcon"
+        );
+
+
+    /* Open modal */
+
+    modal.classList.add("show");
+
+
+    /* Loading */
+
+    content.innerHTML = `
+        <div class="loading">
+            Loading ${escapeHTML(reportName)}...
+        </div>
+    `;
+
+
+    try {
+
+        const [
+            systemResponse,
+            networkResponse,
+            devicesResponse
+        ] = await Promise.all([
+
+            fetch(
+                "/api/system",
+                {
+                    cache: "no-store"
+                }
+            ),
+
+            fetch(
+                "/api/network",
+                {
+                    cache: "no-store"
+                }
+            ),
+
+            fetch(
+                "/api/devices",
+                {
+                    cache: "no-store"
+                }
+            )
+
+        ]);
+
+
+        if (
+            !systemResponse.ok ||
+            !networkResponse.ok ||
+            !devicesResponse.ok
+        ) {
+
+            throw new Error(
+                "Unable to load report data."
+            );
+
+        }
+
+
+        const system =
+            await systemResponse.json();
+
+
+        const network =
+            await networkResponse.json();
+
+
+        const devices =
+            await devicesResponse.json();
+
+
+        const cpu =
+            Number(
+                system.cpu ??
+                system.cpu_percent ??
+                system.cpu_usage ??
+                0
+            );
+
+
+        const memory =
+            Number(
+                system.memory ??
+                system.memory_percent ??
+                system.memory_usage ??
+                0
+            );
+
+
+        const disk =
+            Number(
+                system.disk ??
+                system.disk_percent ??
+                system.disk_usage ??
+                0
+            );
+
+
+        const received =
+            Number(
+                network.bytes_received ??
+                network.received ??
+                0
+            );
+
+
+        const sent =
+            Number(
+                network.bytes_sent ??
+                network.sent ??
+                0
+            );
+
+
+        const deviceList =
+            Array.isArray(devices)
+                ? devices
+                : (
+                    devices.devices || []
+                );
+
+
+        /* =================================================
+           SYSTEM PERFORMANCE
+        ================================================= */
+
+        if (
+            reportName ===
+            "System Performance"
+        ) {
+
+            title.textContent =
+                "System Performance";
+
+
+            subtitle.textContent =
+                "Current CPU, memory and disk utilization";
+
+
+            icon.textContent =
+                "◒";
+
+
+            content.innerHTML = `
+
+                <div class="modal-stat-grid">
+
+
+                    <div class="modal-stat">
+
+                        <div class="modal-stat-label">
+                            CPU Usage
+                        </div>
+
+                        <div class="modal-stat-value">
+                            ${cpu.toFixed(1)}%
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-stat">
+
+                        <div class="modal-stat-label">
+                            Memory Usage
+                        </div>
+
+                        <div class="modal-stat-value">
+                            ${memory.toFixed(1)}%
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-stat">
+
+                        <div class="modal-stat-label">
+                            Disk Usage
+                        </div>
+
+                        <div class="modal-stat-value">
+                            ${disk.toFixed(1)}%
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <table class="modal-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Metric
+                            </th>
+
+                            <th>
+                                Current Value
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>
+                                CPU Usage
+                            </td>
+
+                            <td>
+                                ${cpu.toFixed(1)}%
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                Memory Usage
+                            </td>
+
+                            <td>
+                                ${memory.toFixed(1)}%
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                Disk Usage
+                            </td>
+
+                            <td>
+                                ${disk.toFixed(1)}%
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+
+                <div class="modal-note">
+
+                    Performance data captured at
+                    ${new Date().toLocaleTimeString()}
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =================================================
+           NETWORK TRAFFIC
+        ================================================= */
+
+        else if (
+            reportName ===
+            "Network Traffic"
+        ) {
+
+            const total =
+                received + sent;
+
+
+            title.textContent =
+                "Network Traffic";
+
+
+            subtitle.textContent =
+                "Current upload and download statistics";
+
+
+            icon.textContent =
+                "↕";
+
+
+            content.innerHTML = `
+
+                <div class="modal-stat-grid">
+
+
+                    <div class="modal-stat">
+
+                        <div class="modal-stat-label">
+                            Download
+                        </div>
+
+                        <div class="modal-stat-value">
+                            ${formatMB(received)}
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-stat">
+
+                        <div class="modal-stat-label">
+                            Upload
+                        </div>
+
+                        <div class="modal-stat-value">
+                            ${formatMB(sent)}
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-stat">
+
+                        <div class="modal-stat-label">
+                            Total Traffic
+                        </div>
+
+                        <div class="modal-stat-value">
+                            ${formatMB(total)}
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <table class="modal-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Traffic Type
+                            </th>
+
+                            <th>
+                                Transferred
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>
+                                Download
+                            </td>
+
+                            <td>
+                                ${formatMB(received)}
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                Upload
+                            </td>
+
+                            <td>
+                                ${formatMB(sent)}
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                Total
+                            </td>
+
+                            <td>
+                                ${formatMB(total)}
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+
+                <div class="modal-note">
+
+                    Network statistics captured at
+                    ${new Date().toLocaleTimeString()}
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =================================================
+           DEVICE REPORT
+        ================================================= */
+
+        else if (
+            reportName ===
+            "Device Report"
+        ) {
+
+            title.textContent =
+                "Device Report";
+
+
+            subtitle.textContent =
+                "Connected devices and network interfaces";
+
+
+            icon.textContent =
+                "▦";
+
+
+            let deviceHTML = "";
+
+
+            if (
+                deviceList.length === 0
+            ) {
+
+                deviceHTML = `
+
+                    <div class="loading">
+
+                        No connected devices detected.
+
+                    </div>
+
+                `;
+
+            } else {
+
+                deviceHTML =
+                    deviceList
+                    .map(
+                        (device, index) => {
+
+                            const name =
+                                device.name ??
+                                device.hostname ??
+                                `Device ${index + 1}`;
+
+
+                            const ip =
+                                device.ip_address ??
+                                device.ip ??
+                                device.address ??
+                                "N/A";
+
+
+                            const status =
+                                device.status ??
+                                device.state ??
+                                "Online";
+
+
+                            return `
+
+                                <div class="device-row">
+
+                                    <div>
+
+                                        <div class="device-name">
+
+                                            ${escapeHTML(name)}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="device-ip">
+
+                                        ${escapeHTML(ip)}
+
+                                    </div>
+
+
+                                    <div class="device-status">
+
+                                        ●
+                                        ${escapeHTML(status)}
+
+                                    </div>
+
+                                </div>
+
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+            }
+
+
+            content.innerHTML = `
+
+                <div class="modal-stat-grid">
+
+
+                    <div class="modal-stat">
+
+                        <div class="modal-stat-label">
+                            Total Devices
+                        </div>
+
+                        <div class="modal-stat-value">
+                            ${deviceList.length}
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-stat">
+
+                        <div class="modal-stat-label">
+                            Network Status
+                        </div>
+
+                        <div class="modal-stat-value">
+                            Online
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-stat">
+
+                        <div class="modal-stat-label">
+                            Report Time
+                        </div>
+
+                        <div class="modal-stat-value">
+                            ${new Date().toLocaleTimeString()}
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                ${deviceHTML}
+
+
+                <div class="modal-note">
+
+                    Device information retrieved from
+                    the current NetMonitor system data.
+
+                </div>
+
+            `;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "View Report Error:",
+            error
+        );
+
+
+        title.textContent =
+            reportName;
+
+
+        subtitle.textContent =
+            "Unable to retrieve report information";
+
+
+        content.innerHTML = `
+
+            <div class="loading">
+
+                Unable to retrieve the report data.
+                Please try again.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   CLOSE REPORT MODAL
+===================================================== */
+
+function closeReportModal() {
+
+    document
+        .getElementById("reportModal")
+        .classList.remove("show");
+
+}
+
+
+/* =====================================================
+   CLOSE WHEN CLICKING OUTSIDE
+===================================================== */
+
+document
+    .getElementById("reportModal")
+    .addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target === this
+            ) {
+
+                closeReportModal();
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   ESCAPE KEY
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeReportModal();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   GENERATE FULL REPORT
+===================================================== */
+
+async function generateReport() {
+
+    try {
+
+        const [
+            systemResponse,
+            networkResponse,
+            devicesResponse
+        ] = await Promise.all([
+
+            fetch(
+                "/api/system",
+                {
+                    cache: "no-store"
+                }
+            ),
+
+            fetch(
+                "/api/network",
+                {
+                    cache: "no-store"
+                }
+            ),
+
+            fetch(
+                "/api/devices",
+                {
+                    cache: "no-store"
+                }
+            )
+
+        ]);
+
+
+        const system =
+            await systemResponse.json();
+
+
+        const network =
+            await networkResponse.json();
+
+
+        const devices =
+            await devicesResponse.json();
+
+
+        const deviceList =
+            Array.isArray(devices)
+                ? devices
+                : (
+                    devices.devices || []
+                );
+
+
+        const cpu =
+            Number(
+                system.cpu ??
+                system.cpu_percent ??
+                system.cpu_usage ??
+                0
+            );
+
+
+        const memory =
+            Number(
+                system.memory ??
+                system.memory_percent ??
+                system.memory_usage ??
+                0
+            );
+
+
+        const disk =
+            Number(
+                system.disk ??
+                system.disk_percent ??
+                system.disk_usage ??
+                0
+            );
+
+
+        const received =
+            Number(
+                network.bytes_received ??
+                network.received ??
+                0
+            );
+
+
+        const sent =
+            Number(
+                network.bytes_sent ??
+                network.sent ??
+                0
+            );
+
+
+        let report =
+
+            "========================================\n" +
+            "           NETMONITOR REPORT\n" +
+            "========================================\n\n" +
+
+            "Generated: " +
+            new Date().toLocaleString() +
+            "\n\n" +
+
+            "SYSTEM PERFORMANCE\n" +
+            "----------------------------------------\n" +
+
+            "CPU Usage: " +
+            cpu.toFixed(1) +
+            "%\n" +
+
+            "Memory Usage: " +
+            memory.toFixed(1) +
+            "%\n" +
+
+            "Disk Usage: " +
+            disk.toFixed(1) +
+            "%\n\n" +
+
+            "NETWORK TRAFFIC\n" +
+            "----------------------------------------\n" +
+
+            "Download: " +
+            formatMB(received) +
+            "\n" +
+
+            "Upload: " +
+            formatMB(sent) +
+            "\n\n" +
+
+            "DEVICES\n" +
+            "----------------------------------------\n" +
+
+            "Total Devices: " +
+            deviceList.length +
+            "\n\n";
+
+
+        deviceList.forEach(
+            (device, index) => {
+
+                const name =
+                    device.name ??
+                    device.hostname ??
+                    "Unknown";
+
+
+                const ip =
+                    device.ip_address ??
+                    device.ip ??
+                    device.address ??
+                    "N/A";
+
+
+                const status =
+                    device.status ??
+                    device.state ??
+                    "Unknown";
+
+
+                report +=
+
+                    (index + 1) +
+                    ". " +
+                    name +
+                    " | " +
+                    ip +
+                    " | " +
+                    status +
+                    "\n";
+
+            }
+        );
+
+
+        report +=
+
+            "\n========================================\n" +
+            "          END OF REPORT\n" +
+            "========================================\n";
+
+
+        const blob =
+            new Blob(
+                [report],
+                {
+                    type:
+                        "text/plain"
+                }
+            );
+
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+
+        link.href = url;
+
+        link.download =
+            "NetMonitor_Report.txt";
+
+
+        document.body.appendChild(
+            link
+        );
+
+
+        link.click();
+
+
+        link.remove();
+
+
+        URL.revokeObjectURL(
+            url
+        );
+
+
+        setText(
+            "report-status",
+            "Full report generated successfully."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Generate Report Error:",
+            error
+        );
+
+
+        setText(
+            "report-status",
+            "Unable to generate report."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadReportData();
+
+
+        setInterval(
+            loadReportData,
+            2000
+        );
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>
